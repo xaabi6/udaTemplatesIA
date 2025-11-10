@@ -8,6 +8,342 @@ Este documento define las **reglas estrictas** que cualquier IA debe seguir al g
 
 ---
 
+## ⚠️ ELEMENTOS CRÍTICOS OBLIGATORIOS
+
+### 🔴 ATENCIÓN: ESTOS 8 ELEMENTOS SON OBLIGATORIOS
+
+**Si falta alguno de estos elementos, la aplicación NO funcionará correctamente.**
+
+| # | Elemento | Ubicación | ¿Por qué es crítico? |
+|---|----------|-----------|---------------------|
+| 1 | **JacksonConfig.java** | `config/` | Sin esto, las fechas se serializan como arrays `[2024,1,15]` en lugar de strings ISO |
+| 2 | **application-dev.yml** | `resources/` | Sin H2, no se puede desarrollar sin Oracle instalado |
+| 3 | **application-prod.yml** | `resources/` | Sin Oracle configurado, no funciona en producción |
+| 4 | **SpringBootServletInitializer** | `Application.java` | Sin esto, no se puede desplegar como WAR en Tomcat |
+| 5 | **packaging WAR** | `pom.xml` | Sin esto, genera JAR en lugar de WAR |
+| 6 | **GlobalExceptionHandler** | `exception/` | Sin esto, los errores no se manejan correctamente |
+| 7 | **Validaciones en DTOs** | `dto/` | Sin esto, datos inválidos llegan a la BD |
+| 8 | **Validaciones Yup** | `frontend/utils/` | Sin esto, validación solo HTML5 (insuficiente) |
+
+### 📋 CHECKLIST PRE-GENERACIÓN
+
+**Antes de empezar a generar código, confirmar:**
+
+```
+[ ] ✅ Voy a generar JacksonConfig.java con JavaTimeModule
+[ ] ✅ Voy a generar application-dev.yml con H2
+[ ] ✅ Voy a generar application-prod.yml con Oracle completo
+[ ] ✅ Application.java va a extender SpringBootServletInitializer
+[ ] ✅ pom.xml va a tener <packaging>war</packaging>
+[ ] ✅ Voy a generar GlobalExceptionHandler completo
+[ ] ✅ Todos los DTOs van a tener validaciones @NotNull, @NotBlank, etc.
+[ ] ✅ Voy a generar validationSchemas.js con Yup
+```
+
+**Si no estás seguro de alguno, DETENTE y revisa este documento.**
+
+---
+
+### 🔴 DETALLE DE ELEMENTOS CRÍTICOS
+
+#### 1. JacksonConfig.java
+
+**Ubicación:** `src/main/java/com/uda/[proyecto]/config/JacksonConfig.java`
+
+**Problema que resuelve:**
+Sin esta configuración, cuando el backend envía un `LocalDateTime`, Jackson lo serializa como:
+```json
+{
+  "createdAt": [2024, 1, 15, 10, 30, 45, 123000000]
+}
+```
+
+En lugar de:
+```json
+{
+  "createdAt": "2024-01-15T10:30:45.123"
+}
+```
+
+**Código obligatorio:**
+
+```java
+package com.uda.[nombre-proyecto].config;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+
+@Configuration
+public class JacksonConfig {
+    
+    @Bean
+    @Primary
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper;
+    }
+}
+```
+
+**Validación:**
+Crear endpoint de prueba y verificar que las fechas son strings ISO-8601.
+
+---
+
+#### 2. application.yml con H2
+
+**Ubicación:** `src/main/resources/application.yml`
+
+**Este es el archivo BASE de configuración y usa H2 para desarrollo.**
+
+**Problema que resuelve:**
+Sin H2, los desarrolladores necesitan tener Oracle instalado localmente, lo cual es:
+- Lento de instalar
+- Consume muchos recursos
+- Dificulta el desarrollo rápido
+
+**Configuración mínima obligatoria:**
+
+```yaml
+spring:
+  # Perfil activo por defecto: desarrollo con H2
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+```
+
+**Dependencia necesaria en pom.xml:**
+```xml
+<dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+---
+
+#### 3. application-prod.yml con Oracle
+
+**Ubicación:** `src/main/resources/application-prod.yml`
+
+**Problema que resuelve:**
+Sin esta configuración, la aplicación no puede conectarse a Oracle en producción.
+
+**Configuración mínima obligatoria:**
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@${DB_HOST:localhost}:${DB_PORT:1521}:${DB_SID:ORCL}
+    username: ${DB_USERNAME:uda_user}
+    password: ${DB_PASSWORD:uda_password}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+  
+  jpa:
+    database-platform: org.hibernate.dialect.Oracle12cDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+```
+
+---
+
+#### 4. Application.java extiende SpringBootServletInitializer
+
+**Ubicación:** `src/main/java/com/uda/[proyecto]/Application.java`
+
+**Problema que resuelve:**
+Sin extender `SpringBootServletInitializer`, la aplicación no se puede desplegar como WAR en Tomcat.
+
+**Código obligatorio:**
+
+```java
+@SpringBootApplication
+public class Application extends SpringBootServletInitializer {
+    
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Application.class);
+    }
+    
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+---
+
+#### 5. pom.xml con packaging WAR
+
+**Ubicación:** `pom.xml`
+
+**Problema que resuelve:**
+Sin `<packaging>war</packaging>`, Maven genera un JAR en lugar de WAR, y no se puede desplegar en Tomcat.
+
+**Elementos obligatorios:**
+
+```xml
+<packaging>war</packaging>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-tomcat</artifactId>
+    <scope>provided</scope>
+</dependency>
+
+<build>
+    <finalName>${project.artifactId}</finalName>
+</build>
+```
+
+---
+
+#### 6. GlobalExceptionHandler
+
+**Ubicación:** `src/main/java/com/uda/[proyecto]/exception/GlobalExceptionHandler.java`
+
+**Problema que resuelve:**
+Sin este handler, cuando ocurre un error:
+- El stack trace completo se envía al cliente (riesgo de seguridad)
+- Los mensajes de error no son consistentes
+- Difícil debugging en producción
+
+**Código mínimo obligatorio:**
+
+```java
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
+        // Manejo de 404
+    }
+    
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
+        // Manejo de errores de validación
+    }
+    
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        // Manejo de errores genéricos (sin exponer stack trace)
+    }
+}
+```
+
+---
+
+#### 7. Validaciones en DTOs
+
+**Problema que resuelve:**
+Sin validaciones, datos inválidos llegan a la base de datos:
+- Strings vacíos donde no deberían
+- Números negativos donde deben ser positivos
+- Emails inválidos
+- Etc.
+
+**Ejemplo obligatorio:**
+
+```java
+@Data
+public class ProductoDTO {
+    
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(min = 3, max = 100)
+    private String nombre;
+    
+    @NotNull(message = "El precio es obligatorio")
+    @DecimalMin(value = "0.01")
+    private BigDecimal precio;
+    
+    @Min(value = 0)
+    private Integer stock;
+}
+```
+
+**En el Controller:**
+```java
+@PostMapping
+public ResponseEntity<ProductoDTO> create(@Valid @RequestBody ProductoDTO dto) {
+    // @Valid es OBLIGATORIO
+}
+```
+
+---
+
+#### 8. Validaciones Yup en Frontend
+
+**Ubicación:** `src/utils/validationSchemas.js`
+
+**Problema que resuelve:**
+Sin Yup, la validación solo se hace con HTML5, que es:
+- Fácil de bypassear
+- Mensajes genéricos
+- No valida lógica compleja
+
+**Código obligatorio:**
+
+```javascript
+import * as yup from 'yup';
+
+export const productoSchema = yup.object({
+  nombre: yup
+    .string()
+    .required('El nombre es obligatorio')
+    .min(3, 'Mínimo 3 caracteres')
+    .max(100, 'Máximo 100 caracteres'),
+  
+  precio: yup
+    .number()
+    .required('El precio es obligatorio')
+    .positive('Debe ser mayor a 0')
+    .typeError('Ingrese un número válido'),
+  
+  stock: yup
+    .number()
+    .min(0, 'No puede ser negativo')
+    .integer('Debe ser un número entero')
+    .typeError('Ingrese un número válido'),
+}).required();
+```
+
+**Uso en formulario:**
+```javascript
+const { control, handleSubmit } = useForm({
+  resolver: yupResolver(productoSchema),  // OBLIGATORIO
+});
+```
+
+---
+
 ## 🎯 Principios Fundamentales
 
 ### 1. Adherencia Estricta
@@ -781,17 +1117,21 @@ describe('ProductoList', () => {
 ### Backend
 
 ❌ **NUNCA**:
-1. Usar `javax.*` en lugar de `jakarta.*` (Spring Boot 3.x usa Jakarta EE)
-2. Usar `System.out.println()` (usar logger)
-3. Hardcodear credenciales en el código
-4. Exponer Entities en Controllers
-5. Usar `@Autowired` en campos (usar constructor injection)
-6. Ignorar excepciones con `catch` vacío
-7. Retornar `null` (usar `Optional`)
-8. Usar SQL nativo sin justificación
-9. Deshabilitar CSRF sin razón válida
-10. Loguear información sensible (passwords, tokens)
-11. Usar `SELECT *` en queries
+1. **Omitir JacksonConfig.java** - CRÍTICO para serialización de fechas
+2. **Omitir application-dev.yml con H2** - CRÍTICO para desarrollo
+3. **Omitir application-prod.yml con Oracle** - CRÍTICO para producción
+4. **No extender SpringBootServletInitializer** - CRÍTICO para Tomcat
+5. **Usar packaging JAR en lugar de WAR** - CRÍTICO para Tomcat
+6. Usar `System.out.println()` (usar logger)
+7. Hardcodear credenciales en el código
+8. Exponer Entities en Controllers
+9. Usar `@Autowired` en campos (usar constructor injection)
+10. Ignorar excepciones con `catch` vacío
+11. Retornar `null` (usar `Optional`)
+12. Usar SQL nativo sin justificación
+13. Deshabilitar CSRF sin razón válida
+14. Loguear información sensible (passwords, tokens)
+15. Usar `SELECT *` en queries
 
 ### Frontend
 
@@ -1218,77 +1558,153 @@ La IA debe generar los archivos **exactamente en este orden**:
 
 ### Fase 1: Configuración Base del Backend (5 archivos)
 
-1. `backend/pom.xml`
-2. `backend/src/main/resources/application.yml`
-3. `backend/src/main/resources/application-prod.yml`
-4. `backend/src/main/java/com/uda/[proyecto]/Application.java`
+1. `backend/pom.xml` ⚠️ **VERIFICAR:** packaging=war, tomcat=provided, dependencia H2
+2. `backend/src/main/resources/application.yml` ⚠️ **CRÍTICO:** con H2 completo
+3. `backend/src/main/resources/application-prod.yml` ⚠️ **CRÍTICO:** con Oracle completo
+4. `backend/src/main/java/com/uda/[proyecto]/Application.java` ⚠️ **VERIFICAR:** extends SpringBootServletInitializer
 5. `backend/.gitignore`
 
 ### Fase 2: Configuración de Seguridad y Web (2 archivos)
 
-6. `backend/src/main/java/com/uda/[proyecto]/config/SecurityConfig.java`
-7. `backend/src/main/java/com/uda/[proyecto]/config/WebConfig.java`
+6. `backend/src/main/java/com/uda/[proyecto]/config/JacksonConfig.java` ⚠️ **CRÍTICO:** SIEMPRE GENERAR PRIMERO
+7. `backend/src/main/java/com/uda/[proyecto]/config/SecurityConfig.java`
+8. `backend/src/main/java/com/uda/[proyecto]/config/WebConfig.java`
 
 ### Fase 3: Excepciones (3 archivos)
 
-8. `backend/src/main/java/com/uda/[proyecto]/exception/ResourceNotFoundException.java`
-9. `backend/src/main/java/com/uda/[proyecto]/exception/ErrorResponse.java`
-10. `backend/src/main/java/com/uda/[proyecto]/exception/GlobalExceptionHandler.java`
+9. `backend/src/main/java/com/uda/[proyecto]/exception/ResourceNotFoundException.java`
+10. `backend/src/main/java/com/uda/[proyecto]/exception/ErrorResponse.java`
+11. `backend/src/main/java/com/uda/[proyecto]/exception/GlobalExceptionHandler.java` ⚠️ **CRÍTICO:** este operador y el resto de excepciones personalizadas
 
 ### Fase 4: Entidades (por cada entidad, 6 archivos)
 
-11. `backend/src/main/java/com/uda/[proyecto]/entity/Producto.java`
-12. `backend/src/main/java/com/uda/[proyecto]/dto/ProductoDTO.java`
-13. `backend/src/main/java/com/uda/[proyecto]/mapper/ProductoMapper.java`
-14. `backend/src/main/java/com/uda/[proyecto]/repository/ProductoRepository.java`
-15. `backend/src/main/java/com/uda/[proyecto]/service/ProductoService.java`
-16. `backend/src/main/java/com/uda/[proyecto]/service/impl/ProductoServiceImpl.java`
+12. `backend/src/main/java/com/uda/[proyecto]/entity/Producto.java`
+13. `backend/src/main/java/com/uda/[proyecto]/dto/ProductoDTO.java` ⚠️ **VERIFICAR:** Todas tienen validaciones
+14. `backend/src/main/java/com/uda/[proyecto]/mapper/ProductoMapper.java`
+15. `backend/src/main/java/com/uda/[proyecto]/repository/ProductoRepository.java`
+16. `backend/src/main/java/com/uda/[proyecto]/service/ProductoService.java`
+17. `backend/src/main/java/com/uda/[proyecto]/service/impl/ProductoServiceImpl.java`
 
 ### Fase 5: Controladores (1 archivo por entidad)
 
-17. `backend/src/main/java/com/uda/[proyecto]/controller/ProductoController.java`
+18. `backend/src/main/java/com/uda/[proyecto]/controller/ProductoController.java` ⚠️ **VERIFICAR:** Usan @Valid en DTOs
 
 ### Fase 6: Base de Datos (1 archivo)
 
-18. `database/schema.sql` (con tablas, secuencias, índices y datos de ejemplo)
+19. `database/schema.sql` (con tablas, secuencias, índices y datos de ejemplo)
 
 ### Fase 7: Configuración Base del Frontend (5 archivos)
 
-19. `frontend/package.json`
-20. `frontend/vite.config.js`
-21. `frontend/index.html`
-22. `frontend/.gitignore`
-23. `frontend/.env.example`
+20. `frontend/package.json`
+21. `frontend/vite.config.js`
+22. `frontend/index.html`
+23. `frontend/.gitignore`
+24. `frontend/.env.example`
 
 ### Fase 8: Configuración de Estilos y API (2 archivos)
 
-24. `frontend/src/styles/theme.js`
-25. `frontend/src/services/api.js`
+25. `frontend/src/styles/theme.js`
+26. `frontend/src/services/api.js`
 
 ### Fase 9: Servicios del Frontend (1 archivo por entidad)
 
-26. `frontend/src/services/productoService.js`
+27. `frontend/src/services/productoService.js`
 
 ### Fase 10: Componentes Principales (2 archivos)
 
-27. `frontend/src/main.jsx`
-28. `frontend/src/App.jsx`
+28. `frontend/src/main.jsx`
+29. `frontend/src/App.jsx`
 
 ### Fase 11: Páginas (3 archivos por entidad + 1 home)
 
-29. `frontend/src/pages/Home.jsx`
-30. `frontend/src/pages/ProductoList.jsx`
-31. `frontend/src/pages/ProductoForm.jsx`
+30. `frontend/src/pages/Home.jsx`
+31. `frontend/src/pages/ProductoList.jsx`
+32. `frontend/src/pages/ProductoForm.jsx`
 
 ### Fase 12: Documentación (1 archivo)
 
-32. `README.md`
+33. `README.md`
 
 ---
 
 ## ✅ Checklist de Validación Post-Generación
 
-Después de generar todos los archivos, la IA debe verificar:
+Después de generar todos los archivos, la IA debe verificar varios apartados, especialmente los críticos:
+
+### ⚠️ VERIFICACIÓN CRÍTICA (OBLIGATORIA)
+
+**DETENER Y VERIFICAR ESTOS 8 ELEMENTOS ANTES DE CONTINUAR:**
+
+#### Backend Crítico (5 elementos)
+```
+[ ] ✅ JacksonConfig.java existe en config/ y está completo
+      - Tiene @Configuration
+      - Tiene @Bean @Primary ObjectMapper
+      - Registra JavaTimeModule
+      - Desactiva WRITE_DATES_AS_TIMESTAMPS
+
+[ ] ✅ application-dev.yml existe con H2 configurado
+      - URL: jdbc:h2:mem:testdb
+      - H2 Console habilitado
+      - ddl-auto: create-drop
+      - show-sql: true
+      - Dependencia H2 en pom.xml
+
+[ ] ✅ application-prod.yml existe con Oracle configurado
+      - URL Oracle con variables de entorno
+      - HikariCP configurado
+      - ddl-auto: validate
+      - show-sql: false
+
+[ ] ✅ Application.java extiende SpringBootServletInitializer
+      - extends SpringBootServletInitializer
+      - Método configure() sobrescrito
+      - Método main() presente
+
+[ ] ✅ pom.xml tiene packaging WAR
+      - <packaging>war</packaging>
+      - Tomcat con scope provided
+      - <finalName> sin versión
+```
+
+#### Manejo de Errores (1 elemento)
+```
+[ ] ✅ GlobalExceptionHandler existe y está completo
+      - @RestControllerAdvice
+      - Maneja ResourceNotFoundException (404)
+      - Maneja MethodArgumentNotValidException (400)
+      - Maneja Exception genérica (500)
+      - NO expone stack traces
+```
+
+#### Validaciones (2 elementos)
+```
+[ ] ✅ Todos los DTOs tienen validaciones Bean Validation
+      - @NotNull, @NotBlank en campos obligatorios
+      - @Size, @Min, @Max donde corresponda
+      - Mensajes descriptivos
+      - Controllers usan @Valid
+
+[ ] ✅ validationSchemas.js existe con Yup (si hay formularios)
+      - Importa yup
+      - Al menos un schema por formulario
+      - Mensajes en español
+      - Formularios usan yupResolver
+```
+
+**RESULTADO DE VERIFICACIÓN CRÍTICA:**
+
+- ✅ **8/8 elementos:** EXCELENTE - Continuar con checklist completo
+- ⚠️ **6-7/8 elementos:** ACEPTABLE - Corregir faltantes antes de continuar
+- ❌ **< 6/8 elementos:** INSUFICIENTE - DETENER y corregir inmediatamente
+
+**SI LA PUNTUACIÓN ES < 6/8:**
+1. ❌ DETENER la generación
+2. ❌ NO entregar el código
+3. ❌ Corregir los elementos faltantes
+4. ❌ Volver a verificar desde el inicio
+
+Después, sería el turno de verificar los siguientes apartados:
 
 ### Backend
 - [ ] `mvn clean compile` ejecuta sin errores
@@ -1316,6 +1732,115 @@ Después de generar todos los archivos, la IA debe verificar:
 
 ---
 
+## ⚠️ Errores Comunes y Cómo Evitarlos
+
+### Error #1: Fechas como Arrays
+
+**Síntoma:**
+```json
+{
+  "createdAt": [2024, 1, 15, 10, 30, 45, 123000000]
+}
+```
+
+**Causa:** Falta JacksonConfig.java
+
+**Solución:** Generar JacksonConfig.java con JavaTimeModule
+
+---
+
+### Error #2: No compila en desarrollo
+
+**Síntoma:**
+```
+Error: Could not find or load main class oracle.jdbc.OracleDriver
+```
+
+**Causa:** Falta application.yml con H2
+
+**Solución:** Generar application.yml con H2 configurado
+
+---
+
+### Error #3: No se puede desplegar en Tomcat
+
+**Síntoma:**
+```
+Error: No SpringBootServletInitializer found
+```
+
+**Causa:** Application.java no extiende SpringBootServletInitializer
+
+**Solución:** Hacer que Application.java extienda SpringBootServletInitializer
+
+---
+
+### Error #4: Genera JAR en lugar de WAR
+
+**Síntoma:**
+```bash
+ls target/
+# nombre-proyecto.jar  ❌
+```
+
+**Causa:** pom.xml no tiene `<packaging>war</packaging>`
+
+**Solución:** Agregar `<packaging>war</packaging>` en pom.xml
+
+---
+
+### Error #5: Stack traces expuestos al cliente
+
+**Síntoma:**
+```json
+{
+  "error": "java.lang.NullPointerException at com.uda..."
+}
+```
+
+**Causa:** Falta GlobalExceptionHandler
+
+**Solución:** Generar GlobalExceptionHandler completo
+
+---
+
+### Error #6: Datos inválidos en base de datos
+
+**Síntoma:**
+```
+ERROR: ORA-01400: cannot insert NULL into ("PRODUCTOS"."NOMBRE")
+```
+
+**Causa:** DTOs sin validaciones Bean Validation
+
+**Solución:** Agregar `@NotNull`, `@NotBlank`, etc. en todos los DTOs
+
+---
+
+### Error #7: Validación solo HTML5
+
+**Síntoma:**
+Mensajes genéricos del navegador: "Please fill out this field"
+
+**Causa:** Falta validationSchemas.js con Yup
+
+**Solución:** Generar validationSchemas.js con Yup para todos los formularios
+
+---
+
+### Error #8: H2 Console no accesible
+
+**Síntoma:**
+```
+404 Not Found: /h2-console
+```
+
+**Causa:** H2 Console no habilitado en application.yml
+
+**Solución:** Agregar configuración de H2 Console en application.yml
+
+---
+
 ## 📚 Referencias
 
 - **ESTRUCTURA_PROYECTO.md**: Estructura exacta de carpetas y archivos
@@ -1326,6 +1851,20 @@ Después de generar todos los archivos, la IA debe verificar:
 ---
 
 ## ⚠️ Nota Importante
+
+### 🔴 Elementos Críticos
+
+**Los 8 elementos críticos listados al inicio de este documento son OBLIGATORIOS.**
+
+**Si falta alguno:**
+- ❌ La aplicación NO funcionará correctamente
+- ❌ NO cumple con las especificaciones UDA
+- ❌ NO es apta para producción
+- ❌ Requiere corrección INMEDIATA
+
+**Prioridad de verificación:**
+1. **PRIMERO:** Verificar los 8 elementos críticos
+2. **SEGUNDO:** Verificar el resto del checklist
 
 Estas reglas son **OBLIGATORIAS** y **NO NEGOCIABLES**. La IA debe seguirlas al pie de la letra para garantizar:
 

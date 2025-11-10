@@ -135,7 +135,6 @@ proyecto-uda/
 │   │   │   │
 │   │   │   └── resources/
 │   │   │       ├── application.yml
-│   │   │       ├── application-dev.yml
 │   │   │       ├── application-prod.yml
 │   │   │       ├── logback-spring.xml
 │   │   │       ├── banner.txt
@@ -344,9 +343,8 @@ proyecto-uda/
 |---------|-------------|-------------|
 | `pom.xml` | Configuración de Maven | ✅ |
 | `Application.java` | Clase principal de Spring Boot | ✅ |
-| `application.yml` | Configuración principal | ✅ |
-| `application-dev.yml` | Configuración de desarrollo | ✅ |
-| `application-prod.yml` | Configuración de producción | ✅ |
+| `application.yml` | Configuración base con H2 (desarrollo) | ✅ |
+| `application-prod.yml` | Configuración de producción con Oracle | ✅ |
 | `SecurityConfig.java` | Configuración de seguridad | ✅ |
 | `WebConfig.java` | Configuración web | ✅ |
 | `JacksonConfig.java` | Serialización JSON | ✅ |
@@ -570,7 +568,7 @@ Al generar un proyecto, verificar que existen:
 - [ ] `pom.xml` con todas las dependencias
 - [ ] `Application.java` que extiende `SpringBootServletInitializer`
 - [ ] Carpetas `config/`, `controller/`, `service/`, `repository/`, `entity/`, `dto/`, `mapper/`, `exception/`, `security/`
-- [ ] `application.yml`, `application-dev.yml`, `application-prod.yml`
+- [ ] `application.yml`, `application-prod.yml`
 - [ ] Al menos una entidad completa con su Controller, Service, Repository, DTO y Mapper
 - [ ] `GlobalExceptionHandler` y excepciones personalizadas
 - [ ] Configuración de seguridad con JWT

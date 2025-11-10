@@ -8,6 +8,634 @@ Este documento proporciona una lista de verificación exhaustiva que la IA debe 
 
 ---
 
+## ⚠️ VERIFICACIÓN DE ELEMENTOS CRÍTICOS
+
+### 🔴 PASO 0: ELEMENTOS CRÍTICOS (OBLIGATORIO - 55 PUNTOS)
+
+**ANTES de revisar cualquier otra cosa, verificar estos 8 elementos:**
+
+Esta verificación es **OBLIGATORIA** y debe completarse **ANTES** de continuar con el resto del checklist.
+
+**Si falta alguno de estos elementos, la aplicación NO funcionará correctamente.**
+
+---
+
+#### 🔴 PASO 1. JacksonConfig.java (10 puntos)
+
+**Ubicación:** `src/main/java/com/uda/[proyecto]/config/JacksonConfig.java`
+
+**Verificar:**
+- [ ] El archivo existe en la ubicación correcta
+- [ ] Tiene anotación `@Configuration`
+- [ ] Tiene método `objectMapper()` con anotaciones `@Bean` y `@Primary`
+- [ ] Registra JavaTimeModule: `mapper.registerModule(new JavaTimeModule())`
+- [ ] Desactiva timestamps: `mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)`
+- [ ] Tiene JavaDoc explicativo
+- [ ] Importa correctamente:
+  - `com.fasterxml.jackson.databind.ObjectMapper`
+  - `com.fasterxml.jackson.databind.SerializationFeature`
+  - `com.fasterxml.jackson.datatype.jsr310.JavaTimeModule`
+
+**Código mínimo esperado:**
+```java
+@Configuration
+public class JacksonConfig {
+    
+    @Bean
+    @Primary
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper;
+    }
+}
+```
+
+**Prueba de validación:**
+```java
+// Crear endpoint de prueba
+@GetMapping("/test-date")
+public Map<String, Object> testDate() {
+    Map<String, Object> response = new HashMap<>();
+    response.put("now", LocalDateTime.now());
+    return response;
+}
+```
+
+**Respuesta esperada:**
+```json
+{
+  "now": "2024-01-15T10:30:45.123"  // ✅ String ISO-8601
+}
+```
+
+**Respuesta INCORRECTA (sin JacksonConfig):**
+```json
+{
+  "now": [2024, 1, 15, 10, 30, 45, 123000000]  // ❌ Array
+}
+```
+
+**Puntuación:** ___/10
+
+**⚠️ SI ESTE ELEMENTO FALTA O ESTÁ INCOMPLETO:**
+- ❌ **DETENER evaluación inmediatamente**
+- ❌ **Calificación máxima posible:** 45/100 (INSUFICIENTE)
+- ❌ **Acción requerida:** Generar JacksonConfig.java completo antes de continuar
+
+---
+
+#### 🔴 PASO 2. application.yml con H2 (10 puntos)
+
+**Ubicación:** `src/main/resources/application.yml`
+
+**Este es el archivo BASE y usa H2 por defecto para desarrollo.**
+
+**Verificar:**
+- [ ] El archivo existe
+- [ ] Perfil activo por defecto es 'dev': `profiles.active: ${SPRING_PROFILES_ACTIVE:dev}`
+- [ ] Configura H2 en memoria: `url: jdbc:h2:mem:testdb`
+- [ ] Driver H2: `driver-class-name: org.h2.Driver`
+- [ ] Username: `username: sa`
+- [ ] Password vacío: `password:` (sin valor)
+- [ ] H2 Console habilitado: `h2.console.enabled: true`
+- [ ] Path de consola: `h2.console.path: /h2-console`
+- [ ] Dialect H2: `database-platform: org.hibernate.dialect.H2Dialect`
+- [ ] DDL auto: `ddl-auto: create-drop`
+- [ ] Show SQL activado: `show-sql: true`
+- [ ] Format SQL activado: `format_sql: true`
+
+**Configuración mínima esperada:**
+```yaml
+spring:
+  # Perfil activo por defecto
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  application:
+    name: nombre-proyecto
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /${spring.application.name}
+```
+
+**Dependencia en pom.xml:**
+- [ ] Existe `<dependency>` con `<artifactId>h2</artifactId>`
+- [ ] Tiene `<scope>runtime</scope>`
+
+```xml
+<dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+**Prueba de validación:**
+1. Ejecutar: `mvn spring-boot:run`
+2. Acceder a: `http://localhost:8080/[nombre-proyecto]/h2-console`
+3. Conectar con:
+   - JDBC URL: `jdbc:h2:mem:testdb`
+   - Username: `sa`
+   - Password: (vacío)
+4. Verificar que se puede acceder a la consola
+
+**Puntuación:** ___/10
+
+**⚠️ SI ESTE ELEMENTO FALTA O ESTÁ INCOMPLETO:**
+- ❌ **DETENER evaluación**
+- ❌ **Impacto:** Desarrollo sin BD local imposible
+- ❌ **Acción requerida:** Generar application-dev.yml completo
+
+---
+
+#### 🔴 PASO 3. application-prod.yml con Oracle (10 puntos)
+
+**Ubicación:** `src/main/resources/application-prod.yml`
+
+**Verificar:**
+- [ ] El archivo existe
+- [ ] URL Oracle con variables: `url: jdbc:oracle:thin:@${DB_HOST}:${DB_PORT}:${DB_SID}`
+- [ ] Driver Oracle: `driver-class-name: oracle.jdbc.OracleDriver`
+- [ ] Username con variable: `username: ${DB_USERNAME}`
+- [ ] Password con variable: `password: ${DB_PASSWORD}`
+- [ ] HikariCP configurado:
+  - [ ] `maximum-pool-size: 20` (o variable)
+  - [ ] `minimum-idle: 5` (o variable)
+  - [ ] `connection-timeout: 30000`
+  - [ ] `idle-timeout: 600000`
+  - [ ] `max-lifetime: 1800000`
+- [ ] Dialect Oracle: `database-platform: org.hibernate.dialect.Oracle12cDialect`
+- [ ] DDL auto: `ddl-auto: validate`
+- [ ] Show SQL desactivado: `show-sql: false`
+- [ ] Optimizaciones de Hibernate:
+  - [ ] `jdbc.batch_size: 20`
+  - [ ] `order_inserts: true`
+  - [ ] `order_updates: true`
+
+**Configuración mínima esperada:**
+```yaml
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@${DB_HOST:localhost}:${DB_PORT:1521}:${DB_SID:ORCL}
+    username: ${DB_USERNAME:uda_user}
+    password: ${DB_PASSWORD:uda_password}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:20}
+      minimum-idle: ${DB_POOL_MIN_IDLE:5}
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  jpa:
+    database-platform: org.hibernate.dialect.Oracle12cDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+```
+
+**Archivo .env.prod.example:**
+- [ ] Existe en la raíz del proyecto
+- [ ] Documenta todas las variables necesarias:
+
+```bash
+# Base de datos Oracle
+DB_HOST=oracle-prod.example.com
+DB_PORT=1521
+DB_SID=PROD
+DB_USERNAME=uda_prod_user
+DB_PASSWORD=CHANGE_THIS_PASSWORD
+DB_POOL_SIZE=20
+DB_POOL_MIN_IDLE=5
+```
+
+**Puntuación:** ___/10
+
+**⚠️ SI ESTE ELEMENTO FALTA O ESTÁ INCOMPLETO:**
+- ❌ **DETENER evaluación**
+- ❌ **Impacto:** No funciona en producción
+- ❌ **Acción requerida:** Generar application-prod.yml completo
+
+---
+
+**📋 Resumen de Configuración de Perfiles:**
+
+| Archivo | Perfil | Base de Datos | Cuándo se usa |
+|---------|--------|---------------|---------------|
+| `application.yml` | dev (por defecto) | H2 en memoria | Desarrollo local |
+| `application-prod.yml` | prod | Oracle | Producción/Staging |
+
+**Activación de perfiles:**
+```bash
+# Desarrollo (usa application.yml con H2)
+mvn spring-boot:run
+
+# Producción (usa application-prod.yml con Oracle)
+mvn spring-boot:run -Dspring-boot.run.profiles=prod
+# O configurar variable de entorno:
+export SPRING_PROFILES_ACTIVE=prod
+```
+
+---
+
+#### 🔴 PASO 4. Application.java extiende SpringBootServletInitializer (5 puntos)
+
+**Ubicación:** `src/main/java/com/uda/[proyecto]/Application.java`
+
+**Verificar:**
+- [ ] La clase extiende `SpringBootServletInitializer`
+- [ ] Tiene método `configure()` sobrescrito correctamente
+- [ ] Tiene método `main()` para ejecución standalone
+- [ ] Tiene anotación `@SpringBootApplication`
+- [ ] Tiene JavaDoc explicativo
+- [ ] Importa correctamente:
+  - `org.springframework.boot.builder.SpringApplicationBuilder`
+  - `org.springframework.boot.web.servlet.support.SpringBootServletInitializer`
+
+**Código esperado:**
+```java
+@SpringBootApplication
+public class Application extends SpringBootServletInitializer {
+    
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Application.class);
+    }
+    
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+**Puntuación:** ___/5
+
+**⚠️ SI NO EXTIENDE SpringBootServletInitializer:**
+- ❌ **DETENER evaluación**
+- ❌ **Impacto:** No se puede desplegar como WAR en Tomcat
+- ❌ **Acción requerida:** Modificar Application.java
+
+---
+
+#### 🔴 PASO 5. pom.xml con packaging WAR (5 puntos)
+
+**Ubicación:** `pom.xml`
+
+**Verificar:**
+- [ ] Tiene `<packaging>war</packaging>`
+- [ ] Tomcat como provided:
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-tomcat</artifactId>
+    <scope>provided</scope>
+</dependency>
+```
+- [ ] Build sin versión en nombre:
+```xml
+<build>
+    <finalName>${project.artifactId}</finalName>
+</build>
+```
+- [ ] Dependencia H2 para desarrollo:
+```xml
+<dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+**Prueba de validación:**
+```bash
+mvn clean package
+ls -lh target/*.war  # Debe existir un archivo .war
+```
+
+**Puntuación:** ___/5
+
+**⚠️ SI NO TIENE PACKAGING WAR:**
+- ❌ **DETENER evaluación**
+- ❌ **Impacto:** Genera JAR en lugar de WAR
+- ❌ **Acción requerida:** Modificar pom.xml
+
+---
+
+#### 🟡 PASO 6. GlobalExceptionHandler (5 puntos)
+
+**Ubicación:** `src/main/java/com/uda/[proyecto]/exception/GlobalExceptionHandler.java`
+
+**Verificar:**
+- [ ] El archivo existe
+- [ ] Tiene anotación `@RestControllerAdvice`
+- [ ] Tiene anotación `@Slf4j` (o logger manual)
+- [ ] Maneja `ResourceNotFoundException` → retorna 404
+- [ ] Maneja `MethodArgumentNotValidException` → retorna 400 con errores de validación
+- [ ] Maneja `Exception` genérica → retorna 500
+- [ ] NO expone stack traces en producción
+- [ ] Retorna `ErrorResponse` estructurado con:
+  - `timestamp`
+  - `status`
+  - `error`
+  - `message`
+  - `validationErrors` (para errores de validación)
+- [ ] Loguea errores apropiadamente
+
+**ErrorResponse.java:**
+- [ ] Existe en el paquete `exception`
+- [ ] Tiene todos los campos necesarios
+- [ ] Usa Lombok o tiene getters/setters
+
+**Código mínimo esperado:**
+```java
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
+        log.error("Recurso no encontrado: {}", ex.getMessage());
+        ErrorResponse error = ErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.NOT_FOUND.value())
+            .error("Not Found")
+            .message(ex.getMessage())
+            .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+    
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        
+        ErrorResponse error = ErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.BAD_REQUEST.value())
+            .error("Validation Error")
+            .message("Error en la validación de datos")
+            .validationErrors(errors)
+            .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+    
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        log.error("Error interno del servidor", ex);
+        ErrorResponse error = ErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .error("Internal Server Error")
+            .message("Ha ocurrido un error interno en el servidor")
+            .build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+}
+```
+
+**Puntuación:** ___/5
+
+**⚠️ SI FALTA O ESTÁ INCOMPLETO:**
+- ⚠️ **Advertencia:** Manejo de errores deficiente
+- ⚠️ **Impacto:** Stack traces expuestos, mala experiencia de usuario
+- ⚠️ **Acción requerida:** Generar GlobalExceptionHandler completo
+
+---
+
+#### 🟡 PASO 7. Validaciones en DTOs (5 puntos)
+
+**Ubicación:** `src/main/java/com/uda/[proyecto]/dto/`
+
+**Verificar en CADA DTO:**
+- [ ] Campos obligatorios tienen `@NotNull` o `@NotBlank`
+- [ ] Strings tienen `@Size(min=X, max=Y)` con límites apropiados
+- [ ] Números tienen `@Min`, `@Max`, `@DecimalMin`, `@DecimalMax` según corresponda
+- [ ] Emails tienen `@Email`
+- [ ] Patrones específicos tienen `@Pattern`
+- [ ] Todas las validaciones tienen `message` descriptivo en español
+- [ ] Los mensajes son claros y ayudan al usuario
+
+**Ejemplo mínimo aceptable:**
+```java
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ProductoDTO {
+    
+    private Long id;
+    
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
+    private String nombre;
+    
+    @Size(max = 500, message = "La descripción no puede exceder 500 caracteres")
+    private String descripcion;
+    
+    @NotNull(message = "El precio es obligatorio")
+    @DecimalMin(value = "0.01", message = "El precio debe ser mayor a 0")
+    @Digits(integer = 10, fraction = 2, message = "Formato de precio inválido")
+    private BigDecimal precio;
+    
+    @Min(value = 0, message = "El stock no puede ser negativo")
+    private Integer stock;
+}
+```
+
+**En Controllers:**
+- [ ] Todos los `@PostMapping` usan `@Valid`:
+```java
+@PostMapping
+public ResponseEntity<ProductoDTO> create(@Valid @RequestBody ProductoDTO dto) {
+    // ...
+}
+```
+- [ ] Todos los `@PutMapping` usan `@Valid`:
+```java
+@PutMapping("/{id}")
+public ResponseEntity<ProductoDTO> update(@PathVariable Long id, @Valid @RequestBody ProductoDTO dto) {
+    // ...
+}
+```
+
+**Puntuación:** ___/5
+
+**⚠️ SI FALTAN VALIDACIONES:**
+- ⚠️ **Advertencia:** Datos inválidos pueden llegar a la base de datos
+- ⚠️ **Impacto:** Errores en runtime, datos corruptos, problemas de seguridad
+- ⚠️ **Acción requerida:** Agregar validaciones a todos los DTOs
+
+---
+
+#### 🟡 PASO 8. Validaciones Yup en Frontend (5 puntos)
+
+**Ubicación:** `src/utils/validationSchemas.js`
+
+**Verificar:**
+- [ ] El archivo existe
+- [ ] Importa Yup: `import * as yup from 'yup'`
+- [ ] Define al menos un schema por cada formulario de la aplicación
+- [ ] Cada schema tiene validaciones apropiadas:
+  - [ ] `.required()` en campos obligatorios
+  - [ ] `.min()` y `.max()` en strings
+  - [ ] `.positive()` en números que deben ser positivos
+  - [ ] `.integer()` en números enteros
+  - [ ] `.email()` en campos de email
+  - [ ] `.oneOf()` para confirmación de passwords
+- [ ] Todos los mensajes están en español
+- [ ] Los mensajes son descriptivos y ayudan al usuario
+
+**Ejemplo mínimo aceptable:**
+```javascript
+import * as yup from 'yup';
+
+export const productoSchema = yup.object({
+  nombre: yup
+    .string()
+    .required('El nombre es obligatorio')
+    .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .max(100, 'El nombre no puede exceder 100 caracteres'),
+  
+  descripcion: yup
+    .string()
+    .max(500, 'La descripción no puede exceder 500 caracteres'),
+  
+  precio: yup
+    .number()
+    .required('El precio es obligatorio')
+    .positive('El precio debe ser mayor a 0')
+    .typeError('Ingrese un precio válido'),
+  
+  stock: yup
+    .number()
+    .required('El stock es obligatorio')
+    .min(0, 'El stock no puede ser negativo')
+    .integer('El stock debe ser un número entero')
+    .typeError('Ingrese un stock válido'),
+}).required();
+
+export default {
+  productoSchema,
+};
+```
+
+**En formularios:**
+- [ ] Usa `react-hook-form` con `yupResolver`:
+```javascript
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { productoSchema } from '../utils/validationSchemas';
+
+function ProductoForm() {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(productoSchema),  // ⚠️ OBLIGATORIO
+  });
+  
+  // ...
+}
+```
+
+**Dependencias en package.json:**
+- [ ] `yup` está instalado
+- [ ] `@hookform/resolvers` está instalado
+
+**Puntuación:** ___/5
+
+**⚠️ SI FALTAN VALIDACIONES YUP:**
+- ⚠️ **Advertencia:** Validación solo HTML5 (insuficiente)
+- ⚠️ **Impacto:** Mala experiencia de usuario, mensajes genéricos
+- ⚠️ **Acción requerida:** Generar validationSchemas.js completo
+
+---
+
+### 📊 RESUMEN DE VERIFICACIÓN CRÍTICA
+
+**Puntuación de elementos críticos:**
+
+| # | Elemento | Verificado | Puntos | Estado |
+|---|----------|------------|--------|--------|
+| 1 | JacksonConfig.java | [ ] | ___/10 | 🔴 CRÍTICO |
+| 2 | application.yml | [ ] | ___/10 | 🔴 CRÍTICO |
+| 3 | application-prod.yml | [ ] | ___/10 | 🔴 CRÍTICO |
+| 4 | SpringBootServletInitializer | [ ] | ___/5 | 🔴 CRÍTICO |
+| 5 | packaging WAR | [ ] | ___/5 | 🔴 CRÍTICO |
+| 6 | GlobalExceptionHandler | [ ] | ___/5 | 🟡 ALTO |
+| 7 | Validaciones DTOs | [ ] | ___/5 | 🟡 ALTO |
+| 8 | Validaciones Yup | [ ] | ___/5 | 🟡 MEDIO |
+| **TOTAL** | | **___/8** | **___/55** | |
+
+**Criterio de aceptación:**
+
+- ✅ **55/55 puntos (8/8 elementos):** EXCELENTE - Continuar con checklist completo
+- ⚠️ **45-54 puntos (6-7/8 elementos):** ACEPTABLE - Corregir faltantes antes de continuar
+- ❌ **< 45 puntos (< 6/8 elementos):** INSUFICIENTE - Detener y corregir inmediatamente
+
+**SI LA PUNTUACIÓN ES < 45/55:**
+1. ❌ **DETENER** la evaluación inmediatamente
+2. ❌ **NO** continuar con el resto del checklist
+3. ❌ **Corregir** los elementos faltantes o incompletos
+4. ❌ **Volver** a verificar desde el inicio de esta sección
+
+---
+
+### ⚠️ ADVERTENCIA IMPORTANTE
+
+**Los elementos marcados como 🔴 CRÍTICO (elementos 1-5) son OBLIGATORIOS.**
+
+**Si falta alguno de estos 5 elementos:**
+- La aplicación NO compilará, NO ejecutará, o NO funcionará correctamente
+- NO se puede desplegar en Tomcat
+- NO cumple con las especificaciones UDA
+- Calificación automática: **INSUFICIENTE**
+
+**Los elementos marcados como 🟡 (elementos 6-8) son MUY IMPORTANTES.**
+
+**Si faltan estos elementos:**
+- La aplicación funcionará pero con deficiencias graves
+- Mala experiencia de usuario
+- Problemas de seguridad
+- Difícil mantenimiento
+
+---
+
 ## ✅ Checklist General
 
 ### Estructura del Proyecto
@@ -58,7 +686,7 @@ Este documento proporciona una lista de verificación exhaustiva que la IA debe 
 ### Configuración
 
 - [ ] `application.yml` existe y está completo
-- [ ] `application-dev.yml` existe con configuración de desarrollo
+- [ ] `application.yml` existe con configuración de desarrollo
 - [ ] `application-prod.yml` existe con configuración de producción
 - [ ] Configuración de datasource usa variables de entorno
 - [ ] Configuración de JPA está correcta (dialect: Oracle)
@@ -1351,6 +1979,21 @@ Para cada hook personalizado:
 
 ### Antes de Entregar
 
+#### ⚠️ Elementos Críticos (OBLIGATORIO)
+- [ ] ✅ **Verificación crítica completada:** ___/55 puntos
+- [ ] ✅ JacksonConfig.java existe y funciona (fechas como strings ISO)
+- [ ] ✅ application.yml con H2 funciona (perfil dev por defecto)
+- [ ] ✅ application-prod.yml con Oracle está completo
+- [ ] ✅ Application.java extiende SpringBootServletInitializer
+- [ ] ✅ pom.xml genera WAR correctamente
+- [ ] ✅ GlobalExceptionHandler maneja errores correctamente
+- [ ] ✅ DTOs tienen validaciones Bean Validation
+- [ ] ✅ validationSchemas.js existe con Yup
+
+**SI ALGUNO FALTA: DETENER Y CORREGIR ANTES DE CONTINUAR**
+
+#### Elementos Importantes
+
 - [ ] Todos los archivos obligatorios existen
 - [ ] No hay errores de compilación
 - [ ] No hay errores de linting
@@ -1373,7 +2016,7 @@ Para cada hook personalizado:
 - [ ] Paginación funciona (si aplica)
 - [ ] Búsqueda funciona (si aplica)
 
-### Validación de Calidad
+#### Validación de Calidad
 
 - [ ] Código sigue convenciones de nomenclatura
 - [ ] Código está bien documentado
@@ -1390,6 +2033,18 @@ Para cada hook personalizado:
 ---
 
 ## 📊 Métricas de Calidad
+
+### Elementos Críticos
+
+| Métrica | Objetivo | Verificación |
+|---------|----------|--------------|
+| Elementos críticos completos | 8/8 (100%) | Verificar sección "Elementos Críticos" |
+| Puntuación mínima | 55/55 puntos | Sumar puntuación de cada elemento |
+| JacksonConfig funcional | Sí | Probar endpoint con LocalDateTime |
+| H2 funcional en dev | Sí | Acceder a /h2-console |
+| WAR se genera | Sí | `mvn clean package` → archivo .war existe |
+
+**⚠️ Si alguna métrica no se cumple, la aplicación NO es apta para entrega.**
 
 ### Backend
 
