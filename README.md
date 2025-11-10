@@ -157,8 +157,6 @@ Este repositorio sigue versionado semántico:
 - **Minor**: Nuevas funcionalidades o mejoras
 - **Patch**: Correcciones y aclaraciones
 
-**Versión actual**: 1.0.0
-
 ## 🎓 Características Destacadas
 
 ### Backend
