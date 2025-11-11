@@ -532,6 +532,74 @@ public class Producto {
 - Fetch API en lugar de Axios
 - Create React App (usar Vite)
 
+**📖 Ver estándares de UI**: [UI_STANDARDS.md](../UI_STANDARDS.md)
+
+---
+
+## 🎨 Reglas de UI y Design System
+
+### Material-UI es Obligatorio
+
+✅ **SIEMPRE**:
+1. Usar componentes de MUI exclusivamente
+2. Aplicar el tema UDA desde `frontend/src/theme/`
+3. Usar `ThemeProvider` envolviendo toda la app
+4. Usar `CssBaseline` de MUI
+5. Usar `sx` prop para estilos personalizados
+6. Usar `theme.spacing()` para espaciado
+7. Usar `theme.palette.*` para colores
+8. Usar `Typography` para todo el texto
+9. Usar breakpoints para responsive design
+10. Usar iconos de `@mui/icons-material`
+
+❌ **NUNCA**:
+1. Crear componentes UI desde cero
+2. Usar estilos inline: `style={{ color: 'red' }}`
+3. Hardcodear colores: `color: '#1976d2'`
+4. Hardcodear espaciado: `padding: '16px'`
+5. Mezclar HTML nativo con MUI
+6. Usar `!important` en estilos
+7. Crear wrappers innecesarios sobre MUI
+8. Usar otros frameworks UI
+
+### Estructura del Tema
+
+```javascript
+// ✅ CORRECTO - Estructura obligatoria
+frontend/src/theme/
+├── index.js           # Tema principal
+├── palette.js         # Colores UDA
+├── typography.js      # Tipografía
+├── components.js      # Overrides MUI
+└── shadows.js         # Sombras
+```
+
+**📖 Documentación completa**: [UI_STANDARDS.md](../UI_STANDARDS.md)
+
+### Ejemplos de Uso Correcto
+
+```jsx
+// ✅ CORRECTO
+import { Box, Typography, Button } from '@mui/material';
+
+<Box sx={{ p: 3, bgcolor: 'primary.main' }}>
+  <Typography variant="h4" gutterBottom>
+    Título
+  </Typography>
+  <Button variant="contained">
+    Acción
+  </Button>
+</Box>
+
+// ❌ INCORRECTO
+<div style={{ padding: '24px', backgroundColor: '#1976d2' }}>
+  <h1 style={{ fontSize: '24px' }}>Título</h1>
+  <button>Acción</button>
+</div>
+```
+
+**Ver más ejemplos**: [UI_STANDARDS.md](../UI_STANDARDS.md)
+
 ---
 
 ## 🏗️ Reglas de Arquitectura

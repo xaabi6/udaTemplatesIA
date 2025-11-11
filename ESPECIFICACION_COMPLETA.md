@@ -9,10 +9,11 @@
 3. [Archivos .gitignore](#archivos-gitignore)
 4. [Backend - Configuración Esencial](#backend---configuración-esencial)
 5. [Frontend - Configuración Esencial](#frontend---configuración-esencial)
-6. [Base de Datos](#base-de-datos)
-7. [Seguridad Básica](#seguridad-básica)
-8. [Despliegue](#despliegue)
-9. [Checklist de Generación](#checklist-de-generación)
+6. [UI Standards y Design System](#ui-standards-y-design-system)
+7. [Base de Datos](#base-de-datos)
+8. [Seguridad Básica](#seguridad-básica)
+9. [Despliegue](#despliegue)
+10. [Checklist de Generación](#checklist-de-generación)
 
 ---
 
@@ -45,7 +46,7 @@
 | Oracle Database | 12c | 19c | 21c |
 | H2 Database | 2.1.0 | 2.2.x | 2.2.x |
 | React | 18.0.0 | 18.3.x | 18.3.x |
-| Material-UI | 5.0.0 | 5.15.x | 5.15.x |
+| Material-UI (MUI) | 5.0.0 | 5.15.x | 5.15.x |
 | Vite | 4.0.0 | 5.1.x | 5.1.x |
 | Apache Tomcat | 10.0.0 | 10.1.x | 10.1.x |
 
@@ -2249,6 +2250,44 @@ function Home() {
 
 export default Home;
 ```
+
+## UI Standards y Design System
+
+### Design System Oficial: Material-UI (MUI)
+
+Todas las aplicaciones UDA **DEBEN** usar Material-UI como design system único.
+
+**📖 Documentación completa**: [UI_STANDARDS.md](UI_STANDARDS.md)
+
+### Resumen de Reglas
+
+✅ **SIEMPRE**:
+- Usar componentes de MUI
+- Aplicar el tema UDA estandarizado
+- Usar `sx` prop para estilos
+- Usar `theme.spacing()` para espaciado
+- Usar `theme.palette.*` para colores
+
+❌ **NUNCA**:
+- Crear componentes desde cero
+- Usar estilos inline
+- Hardcodear colores o espaciados
+- Mezclar HTML nativo con MUI
+
+### Tema UDA
+
+El tema debe estar en `frontend/src/theme/` con la siguiente estructura:
+
+```
+frontend/src/theme/
+├── index.js           # Tema principal
+├── palette.js         # Colores
+├── typography.js      # Tipografía
+├── components.js      # Overrides de componentes
+└── shadows.js         # Sombras
+```
+
+**Ver implementación completa**: [UI_STANDARDS.md](UI_STANDARDS.md)
 
 ## Base de Datos
 

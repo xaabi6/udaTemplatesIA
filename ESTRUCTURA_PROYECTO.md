@@ -305,6 +305,7 @@ proyecto-uda/
 
 | Directorio | Descripción | Obligatorio |
 |------------|-------------|-------------|
+| `theme/` | Tema UDA de Material-UI (MUI) | ✅ |
 | `pages/` | Componentes de página completa | ✅ |
 | `components/` | Componentes reutilizables | ✅ |
 | `components/common/` | Componentes comunes a toda la app | ✅ |
@@ -363,6 +364,11 @@ proyecto-uda/
 | `index.html` | HTML principal | ✅ |
 | `main.jsx` | Punto de entrada de React | ✅ |
 | `App.jsx` | Componente raíz | ✅ |
+| `theme/index.js` | Tema UDA de Material-UI (MUI) | ✅ |
+| `theme/palette.js` | Colores del tema | ✅ |
+| `theme/typography.js` | Tipografía del tema | ✅ |
+| `theme/components.js` | Overrides de componentes MUI | ✅ |
+| `theme/shadows.js` | Sombras del tema | ✅ |
 
 ---
 

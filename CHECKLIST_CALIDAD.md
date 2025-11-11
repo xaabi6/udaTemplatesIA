@@ -1107,13 +1107,31 @@ Para cada Repository:
   - [ ] `AuthProvider`
   - [ ] `Routes` con todas las rutas
 
-### Tema y Estilos
+### UI y Design System
 
-- [ ] `theme.js` existe en `src/styles/`
-- [ ] Configura paleta de colores (primary, secondary, error, etc.)
-- [ ] Configura tipografía
-- [ ] Configura componentes MUI (Button, Card, TextField)
-- [ ] Exporta tema creado con `createTheme()`
+- [ ] Material-UI está instalado (`@mui/material`, `@mui/icons-material`)
+- [ ] Tema UDA está en `frontend/src/theme/`
+- [ ] Estructura del tema es correcta:
+  - [ ] `theme/index.js` existe
+  - [ ] `theme/palette.js` existe con colores UDA
+  - [ ] `theme/typography.js` existe
+  - [ ] `theme/components.js` existe con overrides
+  - [ ] `theme/shadows.js` existe
+- [ ] `ThemeProvider` envuelve la aplicación en `main.jsx`
+- [ ] `CssBaseline` está incluido
+- [ ] Todos los componentes usan MUI (no HTML nativo)
+- [ ] No hay estilos inline (`style={{}}`)
+- [ ] No hay colores hardcodeados
+- [ ] Se usa `sx` prop para estilos personalizados
+- [ ] Se usa `theme.spacing()` para espaciado
+- [ ] Se usa `theme.palette.*` para colores
+- [ ] Se usa `Typography` para todo el texto
+- [ ] Responsive design con breakpoints de MUI
+- [ ] Iconos de `@mui/icons-material`
+- [ ] No hay wrappers innecesarios sobre componentes MUI
+- [ ] No se usa `!important` en estilos
+
+**📖 Referencia**: [UI_STANDARDS.md](../UI_STANDARDS.md)
 
 ### Servicios
 

@@ -60,8 +60,9 @@ Si eres una IA procesando esta solicitud:
 1. **Lee completamente** el archivo `ESPECIFICACION_COMPLETA.md`
 2. **Aplica** todas las reglas definidas en `REGLAS_GENERACION.md`
 3. **Sigue** la estructura exacta de `ESTRUCTURA_PROYECTO.md`
-4. **Valida** el código generado contra `CHECKLIST_CALIDAD.md`
-5. **Consulta** `MIGRACION_H2_A_ORACLE.md` para configuración de base de datos
+4. **Aplica** los estándares de UI definidos en `UI_STANDARDS.md`
+5. **Valida** el código generado contra `CHECKLIST_CALIDAD.md`
+6. **Consulta** `MIGRACION_H2_A_ORACLE.md` para configuración de base de datos
 
 ## 📁 Estructura del Repositorio
 
@@ -72,6 +73,7 @@ udaTemplatesIA/
 ├── REGLAS_GENERACION.md              # Reglas que la IA debe seguir
 ├── CHECKLIST_CALIDAD.md              # Validación de calidad
 ├── ESTRUCTURA_PROYECTO.md            # Estructura de carpetas y archivos
+├── UI_STANDARDS.md                   # Estándares de UI
 ├── MIGRACION_H2_A_ORACLE.md          # Guía de migración de base de datos
 ├── docs/
 │   ├── backend/
@@ -111,7 +113,29 @@ Documento maestro con **todas** las especificaciones técnicas que la IA debe im
 
 **🔴 IMPORTANTE:** Todas las secciones marcadas con ⚠️ CRÍTICO son obligatorias.
 
-### 2. [REGLAS_GENERACION.md](REGLAS_GENERACION.md)
+### 2. [ESTRUCTURA_PROYECTO.md](ESTRUCTURA_PROYECTO.md)
+Estructura exacta de carpetas y archivos que debe generar la IA:
+- Árbol completo de directorios
+- Archivos obligatorios y opcionales
+- Convenciones de nomenclatura por tecnología
+- Ubicación exacta de cada archivo
+- Archivos de configuración (.gitignore, .env, etc.)
+
+### 3. [UI_STANDARDS.md](UI_STANDARDS.md)
+Estándares de diseño y UI usando Material-UI como design system oficial.
+
+**Contenido:**
+- ✅ Tema UDA estandarizado (colores, tipografía, componentes)
+- ✅ Reglas obligatorias de uso de Material-UI
+- ✅ Estructura del tema (`theme/`)
+- ✅ Ejemplos de código correcto e incorrecto
+- ✅ Patrones de componentes comunes
+- ✅ Guía de responsive design
+- ✅ Personalización avanzada
+
+**Importante**: Todas las aplicaciones UDA **DEBEN** usar Material-UI exclusivamente. No crear componentes UI desde cero, no usar otros frameworks UI, no hardcodear estilos.
+
+### 4. [REGLAS_GENERACION.md](REGLAS_GENERACION.md)
 Reglas estrictas que la IA debe seguir durante la generación:
 - ⚠️ **Elementos Críticos Obligatorios** (8 elementos que NO pueden faltar)
 - ⚠️ **IMPORTANTE**: Uso obligatorio de `jakarta.*` (NO `javax.*`)
@@ -121,17 +145,9 @@ Reglas estrictas que la IA debe seguir durante la generación:
 - Orden de generación de archivos
 - Validación pre-entreg
 
-**🔴 IMPORTANTE:** Contiene la lista de 8 elementos críticos con código de ejemplo.a
+**🔴 IMPORTANTE:** Contiene la lista de 8 elementos críticos con código de ejemplo.
 
-### 3. [ESTRUCTURA_PROYECTO.md](ESTRUCTURA_PROYECTO.md)
-Estructura exacta de carpetas y archivos que debe generar la IA:
-- Árbol completo de directorios
-- Archivos obligatorios y opcionales
-- Convenciones de nomenclatura por tecnología
-- Ubicación exacta de cada archivo
-- Archivos de configuración (.gitignore, .env, etc.)
-
-### 4. [CHECKLIST_CALIDAD.md](CHECKLIST_CALIDAD.md)
+### 5. [CHECKLIST_CALIDAD.md](CHECKLIST_CALIDAD.md)
 Lista de verificación exhaustiva que la IA debe completar antes de entregar:
 - ⚠️ **Verificación de Elementos Críticos** (55 puntos - PASO 0 obligatorio)
 - Checklist de backend (configuración, entidades, servicios, controladores)
@@ -143,7 +159,7 @@ Lista de verificación exhaustiva que la IA debe completar antes de entregar:
 
 **🔴 IMPORTANTE:** El PASO 0 (elementos críticos) debe completarse ANTES del resto.
 
-### 5. [MIGRACION_H2_A_ORACLE.md](MIGRACION_H2_A_ORACLE.md)
+### 6. [MIGRACION_H2_A_ORACLE.md](MIGRACION_H2_A_ORACLE.md)
 Guía completa para migración de base de datos:
 - Configuración de H2 para desarrollo rápido
 - Configuración de Oracle para producción
