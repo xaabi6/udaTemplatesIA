@@ -2,25 +2,6 @@
 
 ---
 
-## ⚠️ ELEMENTOS CRÍTICOS OBLIGATORIOS
-
-**ANTES de empezar a leer este documento, debes saber que hay 8 elementos CRÍTICOS que son OBLIGATORIOS.**
-
-**Si falta alguno de estos elementos, la aplicación NO funcionará:**
-
-1. 🔴 **JacksonConfig.java** - Sin esto, las fechas se serializan mal
-2. 🔴 **application.yml con H2** - Sin esto, no se puede desarrollar sin Oracle
-3. 🔴 **application-prod.yml con Oracle** - Sin esto, no funciona en producción
-4. 🔴 **SpringBootServletInitializer** - Sin esto, no se puede desplegar en Tomcat
-5. 🔴 **packaging WAR** - Sin esto, genera JAR en lugar de WAR
-6. 🟡 **GlobalExceptionHandler** - Sin esto, errores mal manejados
-7. 🟡 **Validaciones en DTOs** - Sin esto, datos inválidos llegan a BD
-8. 🟡 **Validaciones Yup** - Sin esto, validación insuficiente en frontend
-
-**📖 Detalles completos en:** `REGLAS_GENERACION.md` sección "Elementos Críticos"
-
----
-
 ## 📋 Índice
 
 1. [Stack Tecnológico](#stack-tecnológico)
@@ -69,6 +50,25 @@
 | Apache Tomcat | 10.0.0 | 10.1.x | 10.1.x |
 
 **⚠️ IMPORTANTE:** Usar las versiones recomendadas para garantizar compatibilidad.
+
+---
+
+## ⚠️ ELEMENTOS CRÍTICOS OBLIGATORIOS
+
+**ANTES de empezar a leer sobre la estructura, debes saber que hay 8 elementos CRÍTICOS que son OBLIGATORIOS.**
+
+**Si falta alguno de estos elementos, la aplicación NO funcionará:**
+
+1. 🔴 **JacksonConfig.java** - Sin esto, las fechas se serializan mal
+2. 🔴 **application.yml con H2** - Sin esto, no se puede desarrollar sin Oracle
+3. 🔴 **application-prod.yml con Oracle** - Sin esto, no funciona en producción
+4. 🔴 **SpringBootServletInitializer** - Sin esto, no se puede desplegar en Tomcat
+5. 🔴 **packaging WAR** - Sin esto, genera JAR en lugar de WAR
+6. 🟡 **GlobalExceptionHandler** - Sin esto, errores mal manejados
+7. 🟡 **Validaciones en DTOs** - Sin esto, datos inválidos llegan a BD
+8. 🟡 **Validaciones Yup** - Sin esto, validación insuficiente en frontend
+
+**📖 Detalles completos en:** `REGLAS_GENERACION.md` sección "Elementos Críticos"
 
 ---
 

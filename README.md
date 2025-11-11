@@ -6,23 +6,6 @@ Manual de instrucciones para IAs que garantiza la generación consistente de apl
 
 Este repositorio es un **sistema de referencia completo** que permite a cualquier IA (ChatGPT, Claude, Cody, etc.) generar aplicaciones UDA de forma consistente simplemente referenciando este repositorio.
 
-### ⚠️ IMPORTANTE: Elementos Críticos
-
-**Este repositorio define 8 elementos CRÍTICOS que son OBLIGATORIOS en toda aplicación UDA.**
-
-**Si una IA genera código sin estos elementos, la aplicación NO funcionará:**
-
-| # | Elemento | ¿Por qué es crítico? |
-|---|----------|---------------------|
-| 1 | JacksonConfig.java | Fechas se serializan mal sin esto |
-| 2 | application.yml con H2 | No se puede desarrollar sin Oracle |
-| 3 | application-prod.yml con Oracle | No funciona en producción |
-| 4 | SpringBootServletInitializer | No se puede desplegar en Tomcat |
-| 5 | packaging WAR | Genera JAR en lugar de WAR |
-| 6 | GlobalExceptionHandler | Errores mal manejados |
-| 7 | Validaciones en DTOs | Datos inválidos llegan a BD |
-| 8 | Validaciones Yup | Validación insuficiente |
-
 **📖 Ver detalles completos en:** [REGLAS_GENERACION.md](REGLAS_GENERACION.md#elementos-críticos-obligatorios)
 
 **Objetivo**: Que cualquier desarrollador pueda decir a una IA:
@@ -392,6 +375,23 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 ---
 
 ## ⚠️ Notas Importantes
+
+### Elementos Críticos
+
+**Este repositorio define 8 elementos CRÍTICOS que son OBLIGATORIOS en toda aplicación UDA.**
+
+**Si una IA genera código sin estos elementos, la aplicación NO funcionará:**
+
+| # | Elemento | ¿Por qué es crítico? |
+|---|----------|---------------------|
+| 1 | JacksonConfig.java | Fechas se serializan mal sin esto |
+| 2 | application.yml con H2 | No se puede desarrollar sin Oracle |
+| 3 | application-prod.yml con Oracle | No funciona en producción |
+| 4 | SpringBootServletInitializer | No se puede desplegar en Tomcat |
+| 5 | packaging WAR | Genera JAR en lugar de WAR |
+| 6 | GlobalExceptionHandler | Errores mal manejados |
+| 7 | Validaciones en DTOs | Datos inválidos llegan a BD |
+| 8 | Validaciones Yup | Validación insuficiente |
 
 ### Para IAs
 
