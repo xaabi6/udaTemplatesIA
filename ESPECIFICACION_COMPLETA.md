@@ -3369,3 +3369,42 @@ sqlplus usuario/password@localhost:1521/ORCL
 ---
 
 **Importante para IAs**: Este documento contiene las especificaciones completas y ejemplos de código funcional. Seguir **todas** las indicaciones al pie de la letra para garantizar consistencia y funcionalidad.
+
+---
+
+## ✅ Validación del Código Generado
+
+Una vez generada la aplicación siguiendo esta especificación, **valida el código** usando:
+
+### [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
+
+Esta guía proporciona:
+
+1. **12 pasos de validación detallados** con ejemplos
+2. **Sistema de puntuación 0-100** con criterios claros
+3. **Elementos críticos obligatorios** (55 puntos)
+4. **Errores comunes** con soluciones
+5. **Plantilla de reporte** de validación
+6. **Comandos útiles** para testing
+
+**Puntuación mínima requerida:** 80/100
+
+### Validación Rápida
+
+```bash
+# Backend
+cd backend
+mvn clean compile  # Debe compilar sin errores
+mvn test          # Tests deben pasar
+
+# Frontend
+cd frontend
+npm install       # Debe instalar sin errores
+npm run build     # Debe compilar sin errores
+npm test          # Tests deben pasar
+```
+
+Para validación completa, sigue todos los pasos de [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
+
+---
+```

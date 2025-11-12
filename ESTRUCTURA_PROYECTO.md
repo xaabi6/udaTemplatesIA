@@ -618,3 +618,28 @@ Al generar un proyecto, verificar que existen:
 ---
 
 **Nota**: Esta estructura es **obligatoria** y debe ser seguida exactamente por la IA al generar una aplicación UDA.
+
+---
+
+## ✅ Validación de la Estructura
+
+Para verificar que la estructura generada es correcta, usa [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md).
+
+### Validación Rápida de Estructura
+
+```bash
+# Verificar que existen todos los directorios obligatorios
+ls -la backend/src/main/java/com/uda/[proyecto]/
+# Debe mostrar: config/, controller/, service/, repository/, entity/, dto/, mapper/, exception/
+
+ls -la frontend/src/
+# Debe mostrar: pages/, components/, services/, hooks/, contexts/, utils/, styles/
+
+ls -la database/
+# Debe mostrar: schema/, data/
+```
+
+**Para validación completa:** [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md) - PASO 1
+
+---
+```

@@ -6,6 +6,8 @@
 
 Este documento proporciona una lista de verificación exhaustiva que la IA debe completar antes de entregar una aplicación UDA generada. Cada ítem debe ser verificado y marcado como completado.
 
+**💡 Nota:** Para una guía paso a paso con ejemplos y sistema de puntuación, consulta [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
+
 ---
 
 ## ⚠️ VERIFICACIÓN DE ELEMENTOS CRÍTICOS
@@ -2109,9 +2111,9 @@ Este checklist debe ser completado **antes** de considerar la aplicación como t
 
 ---
 
-## 🔗 Referencias
+## 🔗 Documentos Relacionados
 
-- **ESTRUCTURA_PROYECTO.md**: Estructura exacta de carpetas y archivos
-- **REGLAS_GENERACION.md**: Reglas que la IA debe seguir
-- **ESPECIFICACION_COMPLETA.md**: Detalles técnicos completos
-- **docs/**: Documentación detallada por área
+- **[VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)**: Guía paso a paso para validar el código generado
+- **[ESPECIFICACION_COMPLETA.md](ESPECIFICACION_COMPLETA.md)**: Detalles técnicos completos
+- **[REGLAS_GENERACION.md](REGLAS_GENERACION.md)**: Reglas que la IA debe seguir
+- **[ESTRUCTURA_PROYECTO.md](ESTRUCTURA_PROYECTO.md)**: Estructura exacta de carpetas y archivos

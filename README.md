@@ -61,8 +61,9 @@ Si eres una IA procesando esta solicitud:
 2. **Aplica** todas las reglas definidas en `REGLAS_GENERACION.md`
 3. **Sigue** la estructura exacta de `ESTRUCTURA_PROYECTO.md`
 4. **Aplica** los estándares de UI definidos en `UI_STANDARDS.md`
-5. **Valida** el código generado contra `CHECKLIST_CALIDAD.md`
-6. **Consulta** `MIGRACION_H2_A_ORACLE.md` para configuración de base de datos
+5. **Comprueba** el código generado contra `CHECKLIST_CALIDAD.md`
+6. **Valida** el código generado con `VALIDATION_GUIDE.md` (puntuación mínima: 80/100)
+7. **Consulta** `MIGRACION_H2_A_ORACLE.md` para configuración de base de datos
 
 ## 📁 Estructura del Repositorio
 
@@ -74,6 +75,7 @@ udaTemplatesIA/
 ├── CHECKLIST_CALIDAD.md              # Validación de calidad
 ├── ESTRUCTURA_PROYECTO.md            # Estructura de carpetas y archivos
 ├── UI_STANDARDS.md                   # Estándares de UI
+├── VALIDATION_GUIDE.md               # Guía de validación paso a paso
 ├── MIGRACION_H2_A_ORACLE.md          # Guía de migración de base de datos
 ├── docs/
 │   ├── backend/
@@ -159,7 +161,22 @@ Lista de verificación exhaustiva que la IA debe completar antes de entregar:
 
 **🔴 IMPORTANTE:** El PASO 0 (elementos críticos) debe completarse ANTES del resto.
 
-### 6. [MIGRACION_H2_A_ORACLE.md](MIGRACION_H2_A_ORACLE.md)
+### 6. [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
+Guía paso a paso para validar el código generado:
+- ⚠️ **12 pasos de validación detallados** con ejemplos de código
+- ⚠️ **Sistema de puntuación 0-100** con criterios claros
+- ⚠️ **Elementos críticos obligatorios** (55 puntos - PASO 0)
+- Errores comunes con soluciones (Backend, Frontend, Base de Datos)
+- Plantilla de reporte de validación lista para usar
+- Comandos útiles para compilación y testing
+- Herramientas de validación automática
+- Checklist final de entrega
+
+**🔴 IMPORTANTE:** Usar esta guía para **auto-validar** el código antes de entregar. Puntuación mínima requerida: **80/100**.
+
+**Para IAs:** Ejecutar PASO 0 (elementos críticos) ANTES de entregar código.
+
+### 7. [MIGRACION_H2_A_ORACLE.md](MIGRACION_H2_A_ORACLE.md)
 Guía completa para migración de base de datos:
 - Configuración de H2 para desarrollo rápido
 - Configuración de Oracle para producción
@@ -283,6 +300,103 @@ docker-compose up -d
 mvn spring-boot:run -Dspring-boot.run.profiles=prod
 ```
 
+## 🔍 Validación del Código Generado
+
+Después de generar una aplicación, **valida que cumple todos los estándares UDA** usando:
+
+### [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
+
+Esta guía proporciona un **sistema completo de validación** con:
+
+#### 📋 Contenido de la Guía
+
+- ✅ **12 pasos de validación detallados** (PASO 0 a PASO 11)
+- ✅ **Sistema de puntuación 0-100** con criterios objetivos
+- ✅ **Elementos críticos obligatorios** (55 puntos - PASO 0)
+- ✅ **Más de 100 ejemplos de código** (correcto vs incorrecto)
+- ✅ **19 errores comunes documentados** con soluciones
+- ✅ **Plantilla de reporte** de validación lista para usar
+- ✅ **Comandos útiles** para compilación y testing
+- ✅ **Checklist final** de entrega con 50+ puntos
+
+#### 🎯 Sistema de Puntuación
+
+| Categoría | Puntos | Descripción |
+|-----------|--------|-------------|
+| **Elementos Críticos** | 55 | OBLIGATORIOS - PASO 0 |
+| **Criterios Obligatorios** | 15 | Compilación, CRUD, Estructura |
+| **Criterios Recomendados** | 30 | Tests, Seguridad, Documentación |
+| **TOTAL** | 100 | Mínimo requerido: **80/100** |
+
+#### 🚀 Validación Rápida (5 minutos)
+
+```bash
+# 1. Verificar que el backend compila y genera WAR
+cd backend
+mvn clean package
+ls -lh target/*.war  # ✅ Debe existir archivo .war
+
+# 2. Verificar que funciona con H2 (desarrollo)
+mvn spring-boot:run
+# ✅ Debe iniciar sin errores
+# ✅ Acceder a: http://localhost:8080/[nombre-proyecto]/h2-console
+
+# 3. Verificar que el frontend compila
+cd ../frontend
+npm install
+npm run build
+ls -lh dist/  # ✅ Debe existir carpeta con archivos
+
+# 4. Verificar que el frontend funciona
+npm run dev
+# ✅ Debe iniciar sin errores
+# ✅ Acceder a: http://localhost:5173
+```
+
+#### 📊 Validación Completa (30-60 minutos)
+
+Para validación exhaustiva, sigue **todos los pasos** de [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md):
+
+1. **PASO 0:** Elementos Críticos (55 puntos) - **OBLIGATORIO**
+2. **PASO 1:** Validación de Estructura
+3. **PASO 2:** Validación de Configuración
+4. **PASO 3:** Validación por Entidad/Módulo
+5. **PASO 4:** Validación de Base de Datos
+6. **PASO 5:** Validación de Documentación
+7. **PASO 6:** Validación de Calidad de Código
+8. **PASO 7:** Validación de Seguridad
+9. **PASO 8:** Validación de UI/UX
+10. **PASO 9:** Validación de Testing
+11. **PASO 10:** Validación de Configuración
+12. **PASO 11:** Validación Final
+
+#### ⚠️ Para IAs
+
+**Antes de entregar código generado:**
+
+1. ✅ Ejecutar **PASO 0** (Elementos Críticos) - debe obtener **55/55 puntos**
+2. ✅ Si PASO 0 < 45 puntos: **DETENER y corregir**
+3. ✅ Si PASO 0 ≥ 45 puntos: Continuar con resto de pasos
+4. ✅ Puntuación final debe ser **≥ 80/100**
+
+**Checklist rápido de 8 puntos:**
+
+```
+[ ] ✅ JacksonConfig.java existe
+[ ] ✅ application.yml con H2 configurado
+[ ] ✅ application-prod.yml con Oracle configurado
+[ ] ✅ Application.java extiende SpringBootServletInitializer
+[ ] ✅ pom.xml tiene <packaging>war</packaging>
+[ ] ✅ GlobalExceptionHandler.java completo
+[ ] ✅ DTOs tienen validaciones (@NotNull, @NotBlank, etc.)
+[ ] ✅ validationSchemas.js con schemas Yup
+```
+
+**Puntuación:**
+- **8/8:** ✅ EXCELENTE - Código listo para entregar
+- **6-7/8:** ⚠️ ACEPTABLE - Corregir faltantes
+- **< 6/8:** ❌ INSUFICIENTE - NO entregar, revisar documentación
+
 ## 📚 Documentación Adicional
 
 ### Guías Específicas
@@ -340,7 +454,7 @@ npm run dev
 
 **¿Cómo auto-verificar el código generado?**
 
-Usa este checklist de 8 puntos:
+Usa este checklist de 8 puntos (PASO 0 de [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)):
 
 ```
 [ ] ✅ JacksonConfig.java existe en backend/src/main/java/com/uda/[proyecto]/config/
@@ -353,12 +467,14 @@ Usa este checklist de 8 puntos:
 [ ] ✅ validationSchemas.js existe con al menos un schema Yup
 ```
 
-**SI NO ESTÁS SEGURO DE ALGUNO: DETENTE Y REVISA [REGLAS_GENERACION.md](REGLAS_GENERACION.md)**
+**SI NO ESTÁS SEGURO DE ALGUNO: DETENTE Y REVISA [REGLAS_GENERACION.md](REGLAS_GENERACION.md)** - PASO 0**
 
 **Puntuación:**
 - **8/8:** ✅ EXCELENTE - Código listo para entregar
 - **6-7/8:** ⚠️ ACEPTABLE - Corregir faltantes
 - **< 6/8:** ❌ INSUFICIENTE - NO entregar, revisar documentación
+
+**Para validación completa:** Sigue todos los pasos de [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
 
 ## 🤝 Contribuir
 
@@ -616,6 +732,20 @@ R: NO. Las validaciones (Bean Validation en DTOs y Yup en frontend) son elemento
 
 ---
 
+**P: ¿Cómo sé si el código que generé es correcto?**
+
+R: Usa [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md) para auto-validarte:
+
+1. **PASO 0 (Elementos Críticos):** Debe obtener 55/55 puntos
+2. **Validación Completa:** Debe obtener mínimo 80/100 puntos
+3. **Compilación:** `mvn clean package` y `npm run build` sin errores
+4. **Tests:** `mvn test` y `npm test` deben pasar
+5. **Ejecución:** Backend y Frontend deben iniciar sin errores
+
+Si alguno falla, consulta la sección de "Errores Comunes" en VALIDATION_GUIDE.md
+
+---
+
 ## 📞 Soporte
 
 ### Para Desarrolladores
@@ -633,5 +763,8 @@ Si tienes dudas durante la generación:
 
 1. Consulta REGLAS_GENERACION.md sección "Elementos Críticos"
 2. Revisa ESPECIFICACION_COMPLETA.md secciones marcadas con ⚠️
-3. Usa CHECKLIST_CALIDAD.md para auto-validación
-4. En caso de duda, incluye el elemento (mejor sobrar que faltar)
+3. Usa VALIDATION_GUIDE.md para auto-validación paso a paso
+4. Usa CHECKLIST_CALIDAD.md para verificación final
+5. En caso de duda, incluye el elemento (mejor sobrar que faltar)
+
+**Antes de entregar:** Ejecuta PASO 0 de VALIDATION_GUIDE.md (debe obtener 55/55 puntos)
