@@ -6,6 +6,10 @@
 
 Este documento proporciona una lista de verificación exhaustiva que la IA debe completar antes de entregar una aplicación UDA generada. Cada ítem debe ser verificado y marcado como completado.
 
+**⚠️ IMPORTANTE:** Para verificar los 8 elementos críticos obligatorios, consulta [REGLAS_GENERACION.md](REGLAS_GENERACION.md#elementos-críticos-obligatorios)
+
+**💡 Nota:** Para validación paso a paso con ejemplos, consulta [GUIA_VALIDACION.md](GUIA_VALIDACION.md)
+
 ---
 
 ## ✅ Checklist General
@@ -58,13 +62,11 @@ Este documento proporciona una lista de verificación exhaustiva que la IA debe 
 ### Configuración
 
 - [ ] `application.yml` existe y está completo
-- [ ] `application-dev.yml` existe con configuración de desarrollo
 - [ ] `application-prod.yml` existe con configuración de producción
 - [ ] Configuración de datasource usa variables de entorno
 - [ ] Configuración de JPA está correcta (dialect: Oracle)
 - [ ] `ddl-auto` está en `validate` para producción
 - [ ] Configuración de logging está presente
-- [ ] Configuración de JWT está presente
 - [ ] Puerto del servidor está configurado
 - [ ] Context path está configurado
 
@@ -88,62 +90,12 @@ Este documento proporciona una lista de verificación exhaustiva que la IA debe 
 - [ ] Implementa `WebMvcConfigurer`
 - [ ] Configura resource handlers si es necesario
 
-#### JacksonConfig
-
-- [ ] `JacksonConfig.java` existe
-- [ ] Configura serialización de fechas
-
-#### OpenAPIConfig
-
-- [ ] `OpenAPIConfig.java` existe
-- [ ] Configura información de la API (título, versión, descripción)
-- [ ] Configura esquema de seguridad JWT
-- [ ] Tiene contacto y licencia configurados
-
 ### Entidades
-
-#### BaseEntity
-
-- [ ] `BaseEntity.java` existe
-- [ ] Tiene anotación `@MappedSuperclass`
-- [ ] Tiene `@EntityListeners(AuditingEntityListener.class)`
-- [ ] Tiene campos de auditoría:
-  - [ ] `createdAt` con `@CreatedDate`
-  - [ ] `updatedAt` con `@LastModifiedDate`
-  - [ ] `active` (Boolean)
-- [ ] Usa Lombok (`@Getter`, `@Setter`)
-
-#### Usuario
-
-- [ ] `Usuario.java` existe
-- [ ] Implementa `UserDetails`
-- [ ] Tiene anotación `@Entity` y `@Table`
-- [ ] Tiene `@Id` con estrategia de generación por secuencia
-- [ ] Campos obligatorios:
-  - [ ] `username` (unique, not null)
-  - [ ] `password` (not null)
-  - [ ] `email` (unique, not null)
-  - [ ] `enabled`
-  - [ ] `accountNonExpired`
-  - [ ] `accountNonLocked`
-  - [ ] `credentialsNonExpired`
-- [ ] Relación `@ManyToMany` con `Rol`
-- [ ] Implementa métodos de `UserDetails` correctamente
-- [ ] Usa Lombok
-
-#### Rol
-
-- [ ] `Rol.java` existe
-- [ ] Tiene anotación `@Entity` y `@Table`
-- [ ] Tiene `@Id` con estrategia de generación
-- [ ] Campo `nombre` (unique, not null)
-- [ ] Relación `@ManyToMany` con `Usuario`
-- [ ] Usa Lombok
 
 #### Entidades de Dominio
 
 Para cada entidad de dominio:
-- [ ] Extiende `BaseEntity`
+- [ ] Extiende `BaseEntity` (si existe)
 - [ ] Tiene anotación `@Entity` y `@Table` con nombre en MAYÚSCULAS
 - [ ] Tiene `@Id` con `@GeneratedValue` y `@SequenceGenerator`
 - [ ] Nombre de secuencia sigue formato `[TABLA]_SEQ`
@@ -163,7 +115,7 @@ Para cada DTO:
   - [ ] `@Email` para emails
   - [ ] `@DecimalMin`, `@DecimalMax` para números
   - [ ] `@Pattern` para formatos específicos
-- [ ] Mensajes de validación son descriptivos
+- [ ] Mensajes de validación son descriptivos en español
 - [ ] No incluye campos sensibles (passwords sin encriptar)
 - [ ] Tiene JavaDoc completo
 
@@ -172,7 +124,6 @@ Para cada DTO:
 - [ ] `LoginRequestDTO` existe con `username` y `password`
 - [ ] `LoginResponseDTO` existe con `token`, `type`, `id`, `username`, `email`, `roles`
 - [ ] `RegisterRequestDTO` existe con validaciones completas
-- [ ] `PageResponse<T>` existe con campos de paginación
 - [ ] `ErrorResponse` existe con `timestamp`, `status`, `error`, `message`, `validationErrors`
 
 ### Mappers
@@ -197,7 +148,6 @@ Para cada Repository:
   - [ ] `findByActiveTrue()`
   - [ ] `findByIdAndActiveTrue(Long id)`
   - [ ] Queries con `@Query` están bien formadas
-- [ ] Extiende `JpaSpecificationExecutor` si usa Specifications
 - [ ] Tiene JavaDoc completo
 
 ### Services
@@ -235,19 +185,6 @@ Para cada ServiceImpl:
 - [ ] Valida lógica de negocio
 - [ ] Tiene JavaDoc completo
 
-#### AuthService
-
-- [ ] `AuthService.java` existe (interfaz)
-- [ ] `AuthServiceImpl.java` existe (implementación)
-- [ ] Método `login(LoginRequestDTO)` implementado
-- [ ] Método `register(RegisterRequestDTO)` implementado
-- [ ] Método `validateToken(String)` implementado
-- [ ] Usa `AuthenticationManager` para autenticar
-- [ ] Genera tokens JWT
-- [ ] Encripta contraseñas con BCrypt
-- [ ] Valida que username y email no existan al registrar
-- [ ] Asigna rol por defecto al registrar
-
 ### Controllers
 
 Para cada Controller:
@@ -258,7 +195,6 @@ Para cada Controller:
   - [ ] `@RequiredArgsConstructor`
   - [ ] `@Slf4j`
   - [ ] `@CrossOrigin(origins = "*")`
-  - [ ] `@Tag` (OpenAPI)
 - [ ] Inyecta Service por constructor
 - [ ] Endpoints CRUD completos:
   - [ ] `GET /` → `findAll()`
@@ -271,20 +207,8 @@ Para cada Controller:
   - [ ] 200 OK para GET, PUT
   - [ ] 201 CREATED para POST
   - [ ] 204 NO_CONTENT para DELETE
-- [ ] Usa `@PreAuthorize` para autorización si es necesario
-- [ ] Tiene anotaciones OpenAPI (`@Operation`, `@ApiResponses`)
 - [ ] Loguea requests importantes
 - [ ] Tiene JavaDoc completo
-
-#### AuthController
-
-- [ ] `AuthController.java` existe
-- [ ] Endpoint `POST /api/v1/auth/login` implementado
-- [ ] Endpoint `POST /api/v1/auth/register` implementado
-- [ ] Endpoint `GET /api/v1/auth/validate` implementado
-- [ ] Endpoints son públicos (no requieren autenticación)
-- [ ] Valida DTOs con `@Valid`
-- [ ] Retorna códigos HTTP apropiados
 
 ### Excepciones
 
@@ -293,7 +217,6 @@ Para cada Controller:
 - [ ] Maneja excepciones:
   - [ ] `ResourceNotFoundException` → 404
   - [ ] `MethodArgumentNotValidException` → 400
-  - [ ] `BusinessException` → 400
   - [ ] `Exception` (genérica) → 500
 - [ ] Retorna `ErrorResponse` estructurado
 - [ ] Loguea errores apropiadamente
@@ -303,66 +226,9 @@ Para cada Controller:
 #### Excepciones Personalizadas
 
 - [ ] `ResourceNotFoundException.java` existe
-- [ ] `BusinessException.java` existe
-- [ ] `ValidationException.java` existe
 - [ ] Todas extienden `RuntimeException`
 - [ ] Tienen constructores apropiados
 - [ ] Tienen JavaDoc
-
-### Seguridad
-
-#### JWT
-
-- [ ] `JwtUtil.java` existe
-- [ ] Tiene anotación `@Component`
-- [ ] Métodos implementados:
-  - [ ] `generateToken(UserDetails)`
-  - [ ] `extractUsername(String token)`
-  - [ ] `validateToken(String token, UserDetails)`
-  - [ ] `extractExpiration(String token)`
-- [ ] Usa clave secreta desde configuración
-- [ ] Configura tiempo de expiración desde configuración
-- [ ] Usa algoritmo HS256
-
-#### Filtros
-
-- [ ] `JwtRequestFilter.java` existe
-- [ ] Extiende `OncePerRequestFilter`
-- [ ] Tiene anotación `@Component`
-- [ ] Extrae token del header `Authorization`
-- [ ] Valida formato `Bearer {token}`
-- [ ] Valida token con `JwtUtil`
-- [ ] Establece autenticación en `SecurityContext`
-- [ ] Maneja excepciones apropiadamente
-
-#### UserDetailsService
-
-- [ ] `UserDetailsServiceImpl.java` existe
-- [ ] Implementa `UserDetailsService`
-- [ ] Tiene anotación `@Service`
-- [ ] Método `loadUserByUsername()` implementado
-- [ ] Carga usuario desde `UsuarioRepository`
-- [ ] Lanza `UsernameNotFoundException` si no encuentra
-- [ ] Verifica que usuario esté habilitado
-
-### Specifications (Opcional)
-
-Si se usan Specifications:
-- [ ] Clase `[Entidad]Specification.java` existe
-- [ ] Método estático `withFilters(FilterDTO)` implementado
-- [ ] Construye predicados dinámicamente
-- [ ] Maneja valores null apropiadamente
-- [ ] Usa criterios case-insensitive para búsquedas de texto
-
-### Aspects (Opcional)
-
-Si se usan Aspects:
-- [ ] `LoggingAspect.java` existe
-- [ ] Tiene anotaciones `@Aspect` y `@Component`
-- [ ] Define pointcuts apropiados
-- [ ] Loguea entrada/salida de métodos
-- [ ] Loguea excepciones
-- [ ] Mide tiempos de ejecución
 
 ### Tests Backend
 
@@ -378,9 +244,7 @@ Para cada Service:
   - [ ] `testFindById_NotFound()`
   - [ ] `testCreate_Success()`
   - [ ] `testUpdate_Success()`
-  - [ ] `testUpdate_NotFound()`
   - [ ] `testDelete_Success()`
-  - [ ] `testDelete_NotFound()`
 - [ ] Usa patrón AAA (Arrange, Act, Assert)
 - [ ] Verifica llamadas a mocks con `verify()`
 - [ ] Usa assertions apropiadas
@@ -395,33 +259,11 @@ Para cada Controller:
 - [ ] Tests para todos los endpoints:
   - [ ] `testGetAll()`
   - [ ] `testGetById_Success()`
-  - [ ] `testGetById_NotFound()`
   - [ ] `testCreate_Success()`
-  - [ ] `testCreate_ValidationError()`
   - [ ] `testUpdate_Success()`
   - [ ] `testDelete_Success()`
-- [ ] Usa `@WithMockUser` para autenticación
 - [ ] Verifica códigos de estado HTTP
 - [ ] Verifica contenido de respuestas JSON
-
-#### Tests de Repository
-
-Para cada Repository:
-- [ ] Clase `[Entidad]RepositoryTest.java` existe
-- [ ] Tiene anotación `@DataJpaTest`
-- [ ] Inyecta `TestEntityManager`
-- [ ] Tests para métodos personalizados
-- [ ] Verifica persistencia correcta
-- [ ] Verifica consultas personalizadas
-
-### Configuración de Logging
-
-- [ ] `logback-spring.xml` existe (opcional pero recomendado)
-- [ ] Configuración de appenders (console, file)
-- [ ] Configuración de niveles por paquete
-- [ ] Patrón de log incluye timestamp, nivel, clase, mensaje
-- [ ] Logs rotan por tamaño o fecha
-- [ ] Logs antiguos se comprimen o eliminan
 
 ### Scripts SQL
 
@@ -434,7 +276,6 @@ Para cada Repository:
 - [ ] Script incluye comentarios en tablas y columnas
 - [ ] Script `V2__insert_roles.sql` existe
 - [ ] Inserta roles iniciales (ROLE_USER, ROLE_ADMIN)
-- [ ] Crea usuario admin por defecto (opcional)
 
 ---
 
@@ -455,15 +296,10 @@ Para cada Repository:
   - [ ] `build`
   - [ ] `preview`
   - [ ] `test`
-  - [ ] `lint`
 - [ ] `vite.config.js` existe y configura:
   - [ ] Plugin de React
   - [ ] Puerto del servidor (5173)
   - [ ] Proxy para API
-- [ ] `vitest.config.js` existe y configura:
-  - [ ] Entorno jsdom
-  - [ ] Setup file
-  - [ ] Coverage
 - [ ] `.eslintrc.js` existe
 - [ ] `.prettierrc` existe
 - [ ] `.gitignore` está configurado
@@ -479,13 +315,31 @@ Para cada Repository:
   - [ ] `AuthProvider`
   - [ ] `Routes` con todas las rutas
 
-### Tema y Estilos
+### UI y Design System
 
-- [ ] `theme.js` existe en `src/styles/`
-- [ ] Configura paleta de colores (primary, secondary, error, etc.)
-- [ ] Configura tipografía
-- [ ] Configura componentes MUI (Button, Card, TextField)
-- [ ] Exporta tema creado con `createTheme()`
+- [ ] Material-UI está instalado (`@mui/material`, `@mui/icons-material`)
+- [ ] Tema UDA está en `frontend/src/theme/`
+- [ ] Estructura del tema es correcta:
+  - [ ] `theme/index.js` existe
+  - [ ] `theme/palette.js` existe con colores UDA
+  - [ ] `theme/typography.js` existe
+  - [ ] `theme/components.js` existe con overrides
+  - [ ] `theme/shadows.js` existe
+- [ ] `ThemeProvider` envuelve la aplicación en `main.jsx`
+- [ ] `CssBaseline` está incluido
+- [ ] Todos los componentes usan MUI (no HTML nativo)
+- [ ] No hay estilos inline (`style={{}}`)
+- [ ] No hay colores hardcodeados
+- [ ] Se usa `sx` prop para estilos personalizados
+- [ ] Se usa `theme.spacing()` para espaciado
+- [ ] Se usa `theme.palette.*` para colores
+- [ ] Se usa `Typography` para todo el texto
+- [ ] Responsive design con breakpoints de MUI
+- [ ] Iconos de `@mui/icons-material`
+- [ ] No hay wrappers innecesarios sobre componentes MUI
+- [ ] No se usa `!important` en estilos
+
+**📖 Referencia**: [ESTANDARES_UI.md](ESTANDARES_UI.md)
 
 ### Servicios
 
@@ -502,18 +356,6 @@ Para cada Repository:
   - [ ] 404 → muestra mensaje de no encontrado
   - [ ] 500 → muestra mensaje de error del servidor
 
-#### AuthService
-
-- [ ] `authService.js` existe
-- [ ] Métodos implementados:
-  - [ ] `login(credentials)`
-  - [ ] `register(userData)`
-  - [ ] `validateToken(token)`
-  - [ ] `getToken()`
-  - [ ] `getUser()`
-- [ ] Usa instancia de `api`
-- [ ] Tiene JSDoc completo
-
 #### Servicios de Dominio
 
 Para cada servicio:
@@ -524,7 +366,6 @@ Para cada servicio:
   - [ ] `create(data)`
   - [ ] `update(id, data)`
   - [ ] `delete(id)`
-  - [ ] `search(query)` (opcional)
 - [ ] Usa instancia de `api`
 - [ ] Retorna promesas
 - [ ] Tiene JSDoc completo
@@ -543,10 +384,7 @@ Para cada servicio:
   - [ ] `isAuthenticated`
 - [ ] Funciones incluyen:
   - [ ] `login(credentials)`
-  - [ ] `register(userData)`
   - [ ] `logout()`
-  - [ ] `hasRole(role)`
-  - [ ] `hasAnyRole(roles)`
 - [ ] Verifica token al cargar
 - [ ] Guarda/elimina token en localStorage
 - [ ] Redirige apropiadamente
@@ -579,55 +417,16 @@ Para cada servicio:
 - [ ] Lanza error si se usa fuera de `NotificationProvider`
 - [ ] Retorna funciones de notificación
 
-#### usePagination
-
-- [ ] `usePagination.js` existe
-- [ ] Parámetros: `fetchFunction`, `initialPageSize`
-- [ ] Estado incluye:
-  - [ ] `data`
-  - [ ] `loading`
-  - [ ] `page`
-  - [ ] `pageSize`
-  - [ ] `totalElements`
-  - [ ] `totalPages`
-  - [ ] `sortField`
-  - [ ] `sortDirection`
-- [ ] Funciones incluyen:
-  - [ ] `loadData(filters)`
-  - [ ] `handlePageChange(newPage)`
-  - [ ] `handlePageSizeChange(newSize)`
-  - [ ] `handleSortChange(field)`
-  - [ ] `reset()`
-- [ ] Tiene JSDoc completo
-
-#### useErrorHandler
-
-- [ ] `useErrorHandler.js` existe
-- [ ] Funciones incluyen:
-  - [ ] `handleError(error, defaultMessage)`
-  - [ ] `handleValidationErrors(errors, setError)`
-  - [ ] `withErrorHandling(asyncFn, errorMessage)`
-- [ ] Integra con sistema de notificaciones
-- [ ] Extrae mensajes de diferentes formatos de error
-
-#### Hooks de Dominio
-
-Para cada hook de dominio (ej: `useProductos`):
-- [ ] Nombre sigue formato `use[Entidad].js`
-- [ ] Estado incluye:
-  - [ ] `[entidades]`
-  - [ ] `loading`
-  - [ ] `error`
-- [ ] Funciones incluyen:
-  - [ ] `fetch[Entidades]()`
-  - [ ] `create[Entidad](data)`
-  - [ ] `update[Entidad](id, data)`
-  - [ ] `delete[Entidad](id)`
-- [ ] Usa servicio correspondiente
-- [ ] Maneja errores con `useErrorHandler`
-- [ ] Muestra notificaciones de éxito/error
-
 ### Utilidades
+
+#### validationSchemas.js
+
+- [ ] `validationSchemas.js` existe
+- [ ] Esquemas Yup exportados:
+  - [ ] `loginSchema`
+  - [ ] Esquemas para cada formulario de dominio
+- [ ] Mensajes de error descriptivos en español
+- [ ] Validaciones completas
 
 #### constants.js
 
@@ -637,808 +436,47 @@ Para cada hook de dominio (ej: `useProductos`):
   - [ ] `API_BASE_URL`
   - [ ] Códigos de estado HTTP
   - [ ] Mensajes comunes
-  - [ ] Configuraciones
-
-#### validators.js
-
-- [ ] `validators.js` existe
-- [ ] Funciones de validación exportadas
-- [ ] Validaciones comunes (email, teléfono, etc.)
-
-#### validationSchemas.js
-
-- [ ] `validationSchemas.js` existe
-- [ ] Esquemas Yup exportados:
-  - [ ] `loginSchema`
-  - [ ] `registerSchema`
-  - [ ] Esquemas para cada formulario de dominio
-- [ ] Mensajes de error descriptivos
-- [ ] Validaciones completas
-
-#### errorHandler.js
-
-- [ ] `errorHandler.js` existe
-- [ ] Función `getErrorMessage(error)` implementada
-- [ ] Función `logError(error, context)` implementada
-- [ ] Maneja diferentes tipos de errores
-
-#### sanitizer.js
-
-- [ ] `sanitizer.js` existe
-- [ ] Funciones implementadas:
-  - [ ] `sanitizeHtml(html)`
-  - [ ] `sanitizeText(text)`
-  - [ ] `sanitizeUrl(url)`
-  - [ ] `sanitizeEmail(email)`
-  - [ ] `sanitizeObject(obj)`
-- [ ] Usa DOMPurify para HTML
-
-#### logger.js
-
-- [ ] `logger.js` existe
-- [ ] Funciones implementadas:
-  - [ ] `debug(message, data)`
-  - [ ] `info(message, data)`
-  - [ ] `warn(message, data)`
-  - [ ] `error(message, error, data)`
-- [ ] Diferencia entre desarrollo y producción
-- [ ] Envía a servicio externo en producción (opcional)
-
-### Componentes Comunes
-
-#### Header
-
-- [ ] `Header.jsx` existe en `components/common/`
-- [ ] Usa `AppBar` y `Toolbar` de MUI
-- [ ] Muestra logo/título de la aplicación
-- [ ] Muestra menú de navegación
-- [ ] Muestra información del usuario
-- [ ] Botón de logout
-- [ ] Responsive (menú hamburguesa en móvil)
-
-#### Footer
-
-- [ ] `Footer.jsx` existe en `components/common/`
-- [ ] Muestra información de copyright
-- [ ] Enlaces útiles (opcional)
-- [ ] Responsive
-
-#### Loading
-
-- [ ] `Loading.jsx` existe en `components/common/`
-- [ ] Usa `CircularProgress` de MUI
-- [ ] Centrado en pantalla
-- [ ] Acepta prop `message` (opcional)
-
-#### ErrorMessage
-
-- [ ] `ErrorMessage.jsx` existe en `components/common/`
-- [ ] Usa `Alert` de MUI
-- [ ] Acepta props `message` y `severity`
-- [ ] Muestra icono apropiado
-
-#### ConfirmDialog
-
-- [ ] `ConfirmDialog.jsx` existe en `components/common/`
-- [ ] Usa `Dialog` de MUI
-- [ ] Props:
-  - [ ] `open`
-  - [ ] `title`
-  - [ ] `message`
-  - [ ] `onConfirm`
-  - [ ] `onCancel`
-  - [ ] `confirmText` (opcional)
-  - [ ] `cancelText` (opcional)
-  - [ ] `confirmColor` (opcional)
-- [ ] Tiene PropTypes
-
-#### ErrorBoundary
-
-- [ ] `ErrorBoundary.jsx` existe en `components/common/`
-- [ ] Es un componente de clase
-- [ ] Implementa `componentDidCatch()`
-- [ ] Muestra UI de fallback
-- [ ] Loguea errores
-- [ ] Muestra stack trace en desarrollo
-- [ ] Botón para reintentar
-
-#### ProtectedRoute
-
-- [ ] `ProtectedRoute.jsx` existe en `components/common/`
-- [ ] Usa `useAuth()`
-- [ ] Verifica autenticación
-- [ ] Verifica roles si se especifican
-- [ ] Redirige a `/login` si no autenticado
-- [ ] Redirige a `/unauthorized` si no tiene roles
-- [ ] Muestra loading mientras verifica
-- [ ] Tiene PropTypes
-
-### Layouts
-
-#### MainLayout
-
-- [ ] `MainLayout.jsx` existe en `layouts/`
-- [ ] Usa `Outlet` de React Router
-- [ ] Incluye `Header`
-- [ ] Incluye `Footer`
-- [ ] Sidebar (opcional)
-- [ ] Responsive
-- [ ] Maneja estado de sidebar (abierto/cerrado)
-
-### Páginas
-
-#### Home
-
-- [ ] `Home.jsx` existe en `pages/`
-- [ ] Página de bienvenida
-- [ ] Enlaces a secciones principales
-- [ ] Responsive
-
-#### Login
-
-- [ ] `Login.jsx` existe en `pages/`
-- [ ] Usa `react-hook-form`
-- [ ] Usa esquema de validación Yup
-- [ ] Campos:
-  - [ ] Username
-  - [ ] Password (con toggle de visibilidad)
-- [ ] Botón de submit
-- [ ] Link a página de registro
-- [ ] Muestra errores de validación
-- [ ] Muestra errores de autenticación
-- [ ] Deshabilita botón mientras carga
-- [ ] Redirige a dashboard después de login exitoso
-- [ ] Responsive
-
-#### Register
-
-- [ ] `Register.jsx` existe en `pages/`
-- [ ] Usa `react-hook-form`
-- [ ] Usa esquema de validación Yup
-- [ ] Campos:
-  - [ ] Username
-  - [ ] Email
-  - [ ] Password (con toggle de visibilidad)
-  - [ ] Confirm Password
-  - [ ] Nombre
-  - [ ] Apellido
-- [ ] Validación de contraseñas coincidentes
-- [ ] Botón de submit
-- [ ] Link a página de login
-- [ ] Muestra errores de validación
-- [ ] Muestra errores de registro
-- [ ] Deshabilita botón mientras carga
-- [ ] Redirige a dashboard después de registro exitoso
-- [ ] Responsive
-
-#### Dashboard
-
-- [ ] `Dashboard.jsx` existe en `pages/`
-- [ ] Muestra información del usuario
-- [ ] Cards con estadísticas (opcional)
-- [ ] Enlaces rápidos a secciones
-- [ ] Protegida con `ProtectedRoute`
-- [ ] Responsive
-
-#### Unauthorized
-
-- [ ] `Unauthorized.jsx` existe en `pages/`
-- [ ] Muestra mensaje de acceso denegado
-- [ ] Icono apropiado
-- [ ] Botón para volver al dashboard
-- [ ] Responsive
-
-#### NotFound
-
-- [ ] `NotFound.jsx` existe en `pages/`
-- [ ] Muestra mensaje de página no encontrada
-- [ ] Icono 404
-- [ ] Botón para volver al inicio
-- [ ] Responsive
-
-#### Páginas de Listado
-
-Para cada página de listado (ej: `ProductoList.jsx`):
-- [ ] Nombre sigue formato `[Entidad]List.jsx`
-- [ ] Usa hook personalizado (ej: `useProductos`)
-- [ ] Muestra tabla o grid de items
-- [ ] Incluye filtros de búsqueda
-- [ ] Incluye paginación
-- [ ] Botón para crear nuevo
-- [ ] Botones de editar y eliminar por item
-- [ ] Diálogo de confirmación para eliminar
-- [ ] Muestra loading mientras carga
-- [ ] Muestra mensaje si no hay datos
-- [ ] Maneja errores apropiadamente
-- [ ] Responsive (tabla → cards en móvil)
-- [ ] Protegida con `ProtectedRoute`
-
-#### Páginas de Formulario
-
-Para cada página de formulario (ej: `ProductoForm.jsx`):
-- [ ] Nombre sigue formato `[Entidad]Form.jsx`
-- [ ] Usa `react-hook-form`
-- [ ] Usa esquema de validación Yup
-- [ ] Detecta modo (crear/editar) por parámetro de ruta
-- [ ] Carga datos si es edición
-- [ ] Todos los campos necesarios
-- [ ] Validaciones en tiempo real
-- [ ] Muestra errores de validación
-- [ ] Botón de guardar
-- [ ] Botón de cancelar
-- [ ] Deshabilita botones mientras guarda
-- [ ] Muestra loading mientras carga (edición)
-- [ ] Redirige a listado después de guardar
-- [ ] Maneja errores del servidor
-- [ ] Responsive
-- [ ] Protegida con `ProtectedRoute`
-
-### Componentes de Dominio
-
-Para cada componente de dominio:
-
-#### [Entidad]Table
-
-- [ ] Nombre sigue formato `[Entidad]Table.jsx`
-- [ ] Usa `Table` de MUI
-- [ ] Props:
-  - [ ] `data` (array de items)
-  - [ ] `loading`
-  - [ ] `onEdit`
-  - [ ] `onDelete`
-  - [ ] `sortField` (opcional)
-  - [ ] `sortDirection` (opcional)
-  - [ ] `onSort` (opcional)
-- [ ] Columnas apropiadas
-- [ ] Botones de acción por fila
-- [ ] Sorting en headers (opcional)
-- [ ] Muestra loading
-- [ ] Muestra mensaje si no hay datos
-- [ ] Tiene PropTypes
-
-#### [Entidad]Card
-
-- [ ] Nombre sigue formato `[Entidad]Card.jsx`
-- [ ] Usa `Card` de MUI
-- [ ] Props:
-  - [ ] `[entidad]` (objeto)
-  - [ ] `onEdit`
-  - [ ] `onDelete`
-- [ ] Muestra información relevante
-- [ ] Botones de acción
-- [ ] Responsive
-- [ ] Usa `memo` para optimización
-- [ ] Tiene PropTypes
-
-#### [Entidad]Dialog
-
-- [ ] Nombre sigue formato `[Entidad]Dialog.jsx`
-- [ ] Usa `Dialog` de MUI
-- [ ] Props:
-  - [ ] `open`
-  - [ ] `[entidad]` (para edición, null para crear)
-  - [ ] `onClose`
-  - [ ] `onSave`
-- [ ] Usa `react-hook-form`
-- [ ] Usa esquema de validación Yup
-- [ ] Todos los campos necesarios
-- [ ] Validaciones
-- [ ] Botones de guardar y cancelar
-- [ ] Carga datos si es edición
-- [ ] Resetea formulario al cerrar
-- [ ] Tiene PropTypes
 
 ### Tests Frontend
 
-#### Setup
-
-- [ ] `setup.js` existe en `src/__tests__/`
-- [ ] Configura matchers de `@testing-library/jest-dom`
-- [ ] Configura cleanup después de cada test
-- [ ] Mock de `localStorage`
-- [ ] Mock de `window.matchMedia`
-
-#### Tests de Páginas
-
-Para cada página:
-- [ ] Archivo de test existe (ej: `Login.test.jsx`)
-- [ ] Tests incluyen:
-  - [ ] Renderizado inicial
-  - [ ] Validaciones de formulario
-  - [ ] Submit exitoso
-  - [ ] Manejo de errores
-  - [ ] Navegación
-- [ ] Usa `render` de `@testing-library/react`
-- [ ] Usa `screen` para queries
-- [ ] Usa `fireEvent` o `userEvent` para interacciones
-- [ ] Usa `waitFor` para operaciones asíncronas
-- [ ] Mockea servicios
-
-#### Tests de Componentes
-
-Para cada componente:
-- [ ] Archivo de test existe
-- [ ] Tests incluyen:
-  - [ ] Renderizado con diferentes props
-  - [ ] Interacciones del usuario
-  - [ ] Callbacks se llaman correctamente
-- [ ] Usa PropTypes para validar props
-
-#### Tests de Servicios
-
-Para cada servicio:
-- [ ] Archivo de test existe
-- [ ] Tests incluyen:
-  - [ ] Llamadas exitosas
-  - [ ] Manejo de errores
-  - [ ] Parámetros correctos
-- [ ] Mockea instancia de `api`
-
-#### Tests de Hooks
-
-Para cada hook personalizado:
-- [ ] Archivo de test existe
-- [ ] Usa `renderHook` de `@testing-library/react`
-- [ ] Tests incluyen:
-  - [ ] Estado inicial
-  - [ ] Cambios de estado
-  - [ ] Efectos secundarios
-  - [ ] Manejo de errores
-
-### Configuración de Linting
-
-- [ ] `.eslintrc.js` configura:
-  - [ ] Parser de React
-  - [ ] Plugins (react, react-hooks)
-  - [ ] Reglas apropiadas
-  - [ ] Entorno (browser, es2021)
-- [ ] `.prettierrc` configura:
-  - [ ] `singleQuote: true`
-  - [ ] `trailingComma: 'es5'`
-  - [ ] `tabWidth: 2`
-  - [ ] `semi: true`
+- [ ] Tests componentes principales existen
+- [ ] Usa Vitest + React Testing Library
+- [ ] Tests cubren funcionalidad básica
 
 ---
 
-## 🗄️ Base de Datos - Checklist
+## 📊 Base de Datos
 
-### Scripts de Esquema
-
-#### Tablas
-
-- [ ] Carpeta `database/schema/` existe
-- [ ] Script `01_create_tables.sql` existe
-- [ ] Todas las tablas en MAYÚSCULAS
-- [ ] Todas las columnas en MAYÚSCULAS
-- [ ] Cada tabla tiene:
-  - [ ] `ID NUMBER(19) NOT NULL`
-  - [ ] `CREATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL`
-  - [ ] `UPDATED_AT TIMESTAMP`
-  - [ ] `ACTIVE NUMBER(1) DEFAULT 1 NOT NULL`
-- [ ] Tipos de datos apropiados:
-  - [ ] `NUMBER(19)` para IDs
-  - [ ] `VARCHAR2(n)` para strings con longitud
-  - [ ] `NUMBER(10,2)` para decimales
-  - [ ] `TIMESTAMP` para fechas
-  - [ ] `NUMBER(1)` para booleanos
-- [ ] Comentarios en tablas y columnas
-
-#### Secuencias
-
-- [ ] Script `02_create_sequences.sql` existe
-- [ ] Una secuencia por tabla
-- [ ] Formato: `[TABLA]_SEQ`
-- [ ] `START WITH 1`
-- [ ] `INCREMENT BY 1`
-- [ ] `NOCACHE`
-- [ ] `NOCYCLE`
-
-#### Índices
-
-- [ ] Script `03_create_indexes.sql` existe
-- [ ] Índices en columnas de búsqueda frecuente
-- [ ] Índices en Foreign Keys
-- [ ] Formato: `IDX_[TABLA]_[COLUMNA]`
-- [ ] Índices compuestos donde sea apropiado
-
-#### Constraints
-
-- [ ] Script `04_create_constraints.sql` existe
-- [ ] Primary Keys: `PK_[TABLA]`
-- [ ] Foreign Keys: `FK_[TABLA]_[REFERENCIA]`
-- [ ] Unique: `UK_[TABLA]_[COLUMNA]`
-- [ ] Check: `CK_[TABLA]_[COLUMNA]`
-- [ ] Todos los constraints tienen nombres
-
-### Scripts de Datos
-
-#### Datos Iniciales
-
-- [ ] Carpeta `database/data/` existe
-- [ ] Script `01_insert_roles.sql` existe
-- [ ] Inserta roles:
-  - [ ] `ROLE_USER`
-  - [ ] `ROLE_ADMIN`
-  - [ ] `ROLE_MODERATOR` (opcional)
-- [ ] Usa secuencias para IDs
-- [ ] Incluye `COMMIT` al final
-
-#### Datos de Prueba
-
-- [ ] Script `02_insert_test_data.sql` existe (opcional)
-- [ ] Datos de ejemplo para desarrollo
-- [ ] Usa secuencias para IDs
-- [ ] Incluye `COMMIT` al final
-
-### Validación de Esquema
-
-- [ ] Todas las tablas tienen Primary Key
-- [ ] Todas las Foreign Keys tienen índice
-- [ ] Todas las relaciones tienen constraints
-- [ ] No hay columnas sin tipo de dato
-- [ ] No hay nombres en minúsculas
-- [ ] Todos los scripts son ejecutables sin errores
-- [ ] Scripts son idempotentes (pueden ejecutarse múltiples veces)
+- [ ] Scripts SQL en MAYÚSCULAS
+- [ ] Secuencias + Índices + Constraints
+- [ ] Datos iniciales (roles)
 
 ---
 
-## 🐳 Docker - Checklist
+## 📝 Documentación
 
-### Dockerfile Backend
-
-- [ ] `docker/Dockerfile.backend` existe
-- [ ] Usa multi-stage build
-- [ ] Stage 1: Build con Maven
-- [ ] Stage 2: Runtime con JRE
-- [ ] Copia JAR/WAR desde stage de build
-- [ ] Expone puerto 8080
-- [ ] Define variables de entorno
-- [ ] Configura healthcheck
-- [ ] Usuario no-root
-
-### Dockerfile Frontend
-
-- [ ] `docker/Dockerfile.frontend` existe
-- [ ] Usa multi-stage build
-- [ ] Stage 1: Build con Node
-- [ ] Stage 2: Runtime con Nginx
-- [ ] Copia build desde stage anterior
-- [ ] Copia configuración de Nginx
-- [ ] Expone puerto 80
-- [ ] Configura healthcheck
-
-### Nginx Config
-
-- [ ] `docker/nginx.conf` existe
-- [ ] Configura servidor en puerto 80
-- [ ] Configura root a `/usr/share/nginx/html`
-- [ ] Maneja rutas de React Router
-- [ ] Configura compresión gzip
-- [ ] Configura cache para assets estáticos
-- [ ] Configura headers de seguridad
-- [ ] Proxy para API (opcional)
-
-### Docker Compose
-
-- [ ] `docker-compose.yml` existe en raíz
-- [ ] Define servicios:
-  - [ ] `postgres` o `oracle` (base de datos)
-  - [ ] `backend`
-  - [ ] `frontend`
-- [ ] Configuración de base de datos:
-  - [ ] Variables de entorno
-  - [ ] Volumen para persistencia
-  - [ ] Healthcheck
-- [ ] Configuración de backend:
-  - [ ] Depende de base de datos
-  - [ ] Variables de entorno
-  - [ ] Puertos mapeados
-  - [ ] Healthcheck
-- [ ] Configuración de frontend:
-  - [ ] Depende de backend
-  - [ ] Puertos mapeados
-- [ ] Red compartida
-- [ ] Volúmenes definidos
-
-### Variables de Entorno
-
-- [ ] `.env.example` existe
-- [ ] Documenta todas las variables necesarias:
-  - [ ] Base de datos (host, port, name, user, password)
-  - [ ] JWT (secret, expiration)
-  - [ ] Server (port, context-path)
-  - [ ] CORS (allowed-origins)
-  - [ ] Frontend (API URL)
-- [ ] Valores de ejemplo (no producción)
-- [ ] Comentarios explicativos
+- [ ] README.md completo
+- [ ] JavaDoc en clases públicas
+- [ ] JSDoc en servicios
+- [ ] .env.example documentado
 
 ---
 
-## 📚 Documentación - Checklist
+## 📊 Criterios de Calidad
 
-### README Principal
+**Puntuación mínima:** 80/100
 
-- [ ] `README.md` existe en raíz
-- [ ] Incluye:
-  - [ ] Título y descripción del proyecto
-  - [ ] Tabla de contenidos
-  - [ ] Características principales
-  - [ ] Stack tecnológico
-  - [ ] Requisitos previos
-  - [ ] Instrucciones de instalación (backend y frontend)
-  - [ ] Instrucciones de configuración
-  - [ ] Instrucciones de ejecución
-  - [ ] Ejemplos de uso
-  - [ ] Documentación de API (link a Swagger)
-  - [ ] Instrucciones de testing
-  - [ ] Instrucciones de despliegue
-  - [ ] Guía de contribución
-  - [ ] Licencia
-  - [ ] Contacto/Autores
-- [ ] Formato Markdown correcto
-- [ ] Enlaces funcionan
-- [ ] Ejemplos de código son correctos
+- **Elementos Críticos (55 pts):** Ver [REGLAS_GENERACION.md](REGLAS_GENERACION.md)
+- **Funcionalidad (25 pts):** CRUD completo + Autenticación
+- **Calidad (20 pts):** Tests + Documentación + Buenas prácticas
 
-### README Backend
+**Validación rápida:**
+```bash
+# Backend
+mvn clean package  # Debe generar WAR
+mvn spring-boot:run  # Debe iniciar con H2
 
-- [ ] `backend/README.md` existe
-- [ ] Incluye:
-  - [ ] Descripción del backend
-  - [ ] Estructura de carpetas
-  - [ ] Configuración específica
-  - [ ] Comandos Maven útiles
-  - [ ] Información de testing
-  - [ ] Notas de desarrollo
-
-### README Frontend
-
-- [ ] `frontend/README.md` existe
-- [ ] Incluye:
-  - [ ] Descripción del frontend
-  - [ ] Estructura de carpetas
-  - [ ] Configuración específica
-  - [ ] Scripts npm disponibles
-  - [ ] Información de testing
-  - [ ] Notas de desarrollo
-
-### Documentación Adicional
-
-- [ ] `docs/API.md` existe (opcional)
-- [ ] `docs/DEPLOYMENT.md` existe (opcional)
-- [ ] `docs/CONTRIBUTING.md` existe (opcional)
-- [ ] `docs/CHANGELOG.md` existe (opcional)
-
----
-
-## 🔒 Seguridad - Checklist
-
-### Backend
-
-- [ ] Contraseñas encriptadas con BCrypt
-- [ ] JWT implementado correctamente
-- [ ] Tokens tienen expiración
-- [ ] CORS configurado (no `*` en producción)
-- [ ] CSRF deshabilitado solo para APIs REST stateless
-- [ ] Validación de entrada en todos los endpoints
-- [ ] Sanitización de datos
-- [ ] No se exponen stack traces en producción
-- [ ] No hay credenciales hardcodeadas
-- [ ] Variables sensibles en variables de entorno
-- [ ] Logging no incluye información sensible
-- [ ] Headers de seguridad configurados
-- [ ] Rate limiting implementado (opcional)
-- [ ] SQL injection prevenido (uso de JPA)
-- [ ] XSS prevenido (validación y sanitización)
-
-### Frontend
-
-- [ ] Tokens almacenados de forma segura
-- [ ] Rutas protegidas con `ProtectedRoute`
-- [ ] Validación de entrada en formularios
-- [ ] Sanitización de HTML con DOMPurify
-- [ ] No se expone información sensible en código
-- [ ] HTTPS en producción (configuración de servidor)
-- [ ] Content Security Policy configurado
-- [ ] XSS prevenido (sanitización)
-- [ ] CSRF tokens si es necesario
-- [ ] Validación de URLs antes de usar
-
-### Base de Datos
-
-- [ ] Usuario de base de datos con permisos mínimos
-- [ ] Contraseñas fuertes
-- [ ] Conexión encriptada (SSL/TLS en producción)
-- [ ] Backups regulares configurados
-- [ ] No hay datos sensibles sin encriptar
-- [ ] Auditoría de cambios (timestamps)
-
----
-
-## ⚡ Performance - Checklist
-
-### Backend
-
-- [ ] Paginación implementada en listados
-- [ ] Índices en columnas de búsqueda
-- [ ] Lazy loading en relaciones JPA
-- [ ] Queries optimizadas (no N+1)
-- [ ] Cache implementado donde sea apropiado
-- [ ] Connection pooling configurado
-- [ ] Compresión de respuestas habilitada
-- [ ] Logging asíncrono (opcional)
-
-### Frontend
-
-- [ ] Code splitting implementado
-- [ ] Lazy loading de componentes
-- [ ] Imágenes optimizadas
-- [ ] Bundle size optimizado
-- [ ] React.memo en componentes apropiados
-- [ ] useMemo y useCallback donde sea necesario
-- [ ] Debouncing en búsquedas
-- [ ] Paginación en listados grandes
-- [ ] Cache de requests (opcional)
-
-### Base de Datos
-
-- [ ] Índices en columnas frecuentemente consultadas
-- [ ] Índices en Foreign Keys
-- [ ] Queries optimizadas
-- [ ] No hay SELECT *
-- [ ] Uso apropiado de JOIN vs subqueries
-
----
-
-## 🧪 Testing - Checklist
-
-### Backend
-
-- [ ] Tests unitarios para Services
-- [ ] Tests de integración para Controllers
-- [ ] Tests de Repository
-- [ ] Cobertura > 70%
-- [ ] Tests pasan sin errores
-- [ ] Tests son independientes
-- [ ] Tests usan datos de prueba (no producción)
-- [ ] Mocks apropiados
-- [ ] Assertions claras
-
-### Frontend
-
-- [ ] Tests de componentes
-- [ ] Tests de páginas
-- [ ] Tests de servicios
-- [ ] Tests de hooks
-- [ ] Cobertura > 60%
-- [ ] Tests pasan sin errores
-- [ ] Tests son independientes
-- [ ] Mocks apropiados
-- [ ] Assertions claras
-
----
-
-## 🚀 Despliegue - Checklist
-
-### Preparación
-
-- [ ] Variables de entorno documentadas
-- [ ] Configuración de producción separada
-- [ ] Scripts de despliegue incluidos
-- [ ] Instrucciones de despliegue documentadas
-- [ ] Healthchecks configurados
-- [ ] Logs configurados apropiadamente
-
-### Docker
-
-- [ ] Dockerfiles funcionan correctamente
-- [ ] Docker Compose funciona correctamente
-- [ ] Imágenes optimizadas (tamaño)
-- [ ] Multi-stage builds
-- [ ] Healthchecks configurados
-- [ ] Volúmenes para persistencia
-
-### Tomcat (Backend)
-
-- [ ] WAR se genera correctamente
-- [ ] Configuración para Tomcat incluida
-- [ ] Context path configurado
-- [ ] Datasource configurado
-- [ ] Variables de entorno documentadas
-
----
-
-## ✅ Checklist Final
-
-### Antes de Entregar
-
-- [ ] Todos los archivos obligatorios existen
-- [ ] No hay errores de compilación
-- [ ] No hay errores de linting
-- [ ] Todos los tests pasan
-- [ ] No hay TODOs en el código
-- [ ] No hay código comentado
-- [ ] No hay console.log en producción
-- [ ] No hay credenciales hardcodeadas
-- [ ] README está completo
-- [ ] Documentación está actualizada
-- [ ] .gitignore está configurado
-- [ ] Variables de entorno están documentadas
-- [ ] Proyecto compila y ejecuta correctamente
-- [ ] Backend responde en endpoints esperados
-- [ ] Frontend se conecta correctamente al backend
-- [ ] Autenticación funciona
-- [ ] CRUD completo funciona
-- [ ] Validaciones funcionan
-- [ ] Manejo de errores funciona
-- [ ] Paginación funciona (si aplica)
-- [ ] Búsqueda funciona (si aplica)
-
-### Validación de Calidad
-
-- [ ] Código sigue convenciones de nomenclatura
-- [ ] Código está bien documentado
-- [ ] Código es legible y mantenible
-- [ ] No hay duplicación de código
-- [ ] Principios SOLID aplicados
-- [ ] Separación de responsabilidades clara
-- [ ] Manejo de errores robusto
-- [ ] Seguridad implementada correctamente
-- [ ] Performance es aceptable
-- [ ] Tests cubren casos principales
-- [ ] Documentación es clara y completa
-
----
-
-## 📊 Métricas de Calidad
-
-### Backend
-
-| Métrica | Objetivo | Verificación |
-|---------|----------|--------------|
-| Cobertura de tests | > 70% | `mvn test jacoco:report` |
-| Complejidad ciclomática | < 10 por método | Análisis estático |
-| Duplicación de código | < 5% | SonarQube (opcional) |
-| Vulnerabilidades | 0 críticas | `mvn dependency-check:check` |
-| Warnings de compilación | 0 | `mvn clean compile` |
-
-### Frontend
-
-| Métrica | Objetivo | Verificación |
-|---------|----------|--------------|
-| Cobertura de tests | > 60% | `npm test -- --coverage` |
-| Bundle size | < 500KB (gzipped) | `npm run build` |
-| Lighthouse Score | > 90 | Chrome DevTools |
-| ESLint warnings | 0 | `npm run lint` |
-| Vulnerabilidades | 0 críticas | `npm audit` |
-
----
-
-## 🔍 Revisión por Pares
-
-Si es posible, realizar revisión de código verificando:
-
-- [ ] Lógica de negocio es correcta
-- [ ] Código es eficiente
-- [ ] Código es seguro
-- [ ] Código es testeable
-- [ ] Código sigue estándares del proyecto
-- [ ] Documentación es adecuada
-- [ ] Tests son suficientes
-- [ ] No hay code smells evidentes
-
----
-
-## 📝 Notas Finales
-
-Este checklist debe ser completado **antes** de considerar la aplicación como terminada. Cada ítem marcado representa una verificación exitosa de calidad.
-
-**La IA debe usar este checklist como guía final de validación antes de entregar el código generado.**
-
----
-
-## 🔗 Referencias
-
-- **ESTRUCTURA_PROYECTO.md**: Estructura exacta de carpetas y archivos
-- **REGLAS_GENERACION.md**: Reglas que la IA debe seguir
-- **ESPECIFICACION_COMPLETA.md**: Detalles técnicos completos
-- **docs/**: Documentación detallada por área
+# Frontend
+npm run build  # Debe generar dist/
+npm run dev    # Debe iniciar sin errores
+```

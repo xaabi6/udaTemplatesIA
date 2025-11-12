@@ -9,10 +9,11 @@
 3. [Archivos .gitignore](#archivos-gitignore)
 4. [Backend - Configuración Esencial](#backend---configuración-esencial)
 5. [Frontend - Configuración Esencial](#frontend---configuración-esencial)
-6. [Base de Datos](#base-de-datos)
-7. [Seguridad Básica](#seguridad-básica)
-8. [Despliegue](#despliegue)
-9. [Checklist de Generación](#checklist-de-generación)
+6. [UI Standards y Design System](#ui-standards-y-design-system)
+7. [Base de Datos](#base-de-datos)
+8. [Seguridad Básica](#seguridad-básica)
+9. [Despliegue](#despliegue)
+10. [Checklist de Generación](#checklist-de-generación)
 
 ---
 
@@ -30,6 +31,45 @@
 - **Material UI (MUI)**
 - **React Router** + **Axios**
 - **React Hook Form** + **Yup**
+
+---
+
+### Tabla de Compatibilidad
+
+| Componente | Versión Mínima | Versión Recomendada | Versión Máxima Probada |
+|------------|----------------|---------------------|------------------------|
+| Java | 17 | 21 | 25 |
+| Spring Boot | 3.1.0 | 3.5.0 | 3.5.x |
+| Maven | 3.8.0 | 3.9.x | 3.9.x |
+| Node.js | 18.0.0 | 20.x | 22.x |
+| npm | 9.0.0 | 10.x | 10.x |
+| Oracle Database | 12c | 19c | 21c |
+| H2 Database | 2.1.0 | 2.2.x | 2.2.x |
+| React | 18.0.0 | 18.3.x | 18.3.x |
+| Material-UI (MUI) | 5.0.0 | 5.15.x | 5.15.x |
+| Vite | 4.0.0 | 5.1.x | 5.1.x |
+| Apache Tomcat | 10.0.0 | 10.1.x | 10.1.x |
+
+**⚠️ IMPORTANTE:** Usar las versiones recomendadas para garantizar compatibilidad.
+
+---
+
+## ⚠️ ELEMENTOS CRÍTICOS OBLIGATORIOS
+
+**ANTES de empezar a leer sobre la estructura, debes saber que hay 8 elementos CRÍTICOS que son OBLIGATORIOS.**
+
+**Si falta alguno de estos elementos, la aplicación NO funcionará:**
+
+1. 🔴 **JacksonConfig.java** - Sin esto, las fechas se serializan mal
+2. 🔴 **application.yml con H2** - Sin esto, no se puede desarrollar sin Oracle
+3. 🔴 **application-prod.yml con Oracle** - Sin esto, no funciona en producción
+4. 🔴 **SpringBootServletInitializer** - Sin esto, no se puede desplegar en Tomcat
+5. 🔴 **packaging WAR** - Sin esto, genera JAR en lugar de WAR
+6. 🟡 **GlobalExceptionHandler** - Sin esto, errores mal manejados
+7. 🟡 **Validaciones en DTOs** - Sin esto, datos inválidos llegan a BD
+8. 🟡 **Validaciones Yup** - Sin esto, validación insuficiente en frontend
+
+**📖 Detalles completos en:** `REGLAS_GENERACION.md` sección "Elementos Críticos"
 
 ---
 
@@ -83,187 +123,44 @@ proyecto-uda/
 ### Backend - .gitignore
 
 ```gitignore
-# Compiled class files
-*.class
-
-# Log files
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files
+# Build
+target/
 *.jar
 *.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
 
-# Virtual machine crash logs
-hs_err_pid*
-replay_pid*
-
-# Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
-
-# Gradle
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-# IntelliJ IDEA
+# IDEs
 .idea/
-*.iws
 *.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-# Eclipse
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-# NetBeans
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-# VS Code
 .vscode/
 
-# Mac
-.DS_Store
+# Logs
+*.log
 
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# Application specific
-application-local.yml
-application-local.properties
+# Environment
 *.env
-.env.local
+application-local.yml
 ```
 
 ### Frontend - .gitignore
 
 ```gitignore
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
 # Dependencies
 node_modules/
-.pnp
-.pnp.js
 
-# Testing
-/coverage
-*.lcov
-.nyc_output
-
-# Production
+# Build
 dist/
-dist-ssr/
 build/
-*.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Environment variables
+# Environment
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+# IDEs
+.vscode/
+.idea/
 
-# TypeScript
-*.tsbuildinfo
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Optional stylelint cache
-.stylelintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn
-.yarn-integrity
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# yarn v2
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
+# Logs
+*.log
 ```
 
 ### Raíz del Proyecto - .gitignore
@@ -272,51 +169,88 @@ vite.config.ts.timestamp-*
 # IDEs
 .idea/
 .vscode/
-*.iml
-*.ipr
-*.iws
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-logs/
-*.log
+# Build
+target/
+dist/
+node_modules/
 
 # Environment
 .env
-.env.local
-.env.*.local
-
-# Build outputs
-target/
-dist/
-build/
-node_modules/
-
-# Temporary files
-*.tmp
-*.temp
-*.swp
-*.swo
-*~
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Backups
-*.bak
-*.backup
+*.log
 ```
 
 ---
 
 ## Backend - Configuración Esencial
 
+### ⚠️ ELEMENTO CRÍTICO: JacksonConfig.java
+
+**Este archivo es OBLIGATORIO y debe generarse SIEMPRE.**
+
+**Ubicación:** `src/main/java/com/uda/[proyecto]/config/JacksonConfig.java`
+
+**Problema que resuelve:**
+Sin esta configuración, las fechas (`LocalDateTime`, `LocalDate`) se serializan como arrays en lugar de strings ISO-8601.
+
+**Código completo:**
+
+```java
+package com.uda.[nombre-proyecto].config;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+
+/**
+ * Configuración de Jackson para serialización correcta de fechas.
+ * 
+ * Sin esta configuración, LocalDateTime se serializa como array:
+ * [2024, 1, 15, 10, 30, 45, 123000000]
+ * 
+ * Con esta configuración, se serializa como string ISO-8601:
+ * "2024-01-15T10:30:45.123"
+ * 
+ * @author UDA
+ * @version 1.0.0
+ */
+@Configuration
+public class JacksonConfig {
+    
+    /**
+     * Configura ObjectMapper con soporte para Java 8 Date/Time API.
+     * 
+     * @return ObjectMapper configurado
+     */
+    @Bean
+    @Primary
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        
+        // Registrar módulo para Java 8 Date/Time
+        mapper.registerModule(new JavaTimeModule());
+        
+        // Desactivar serialización de fechas como timestamps
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        
+        return mapper;
+    }
+}
+```
+
+**⚠️ IMPORTANTE:** Este archivo debe generarse ANTES de cualquier entidad que use `LocalDateTime` o `LocalDate`.
+
 ### 1. pom.xml (Dependencias Clave)
+
+**⚠️ ELEMENTOS CRÍTICOS en pom.xml:**
+
+1. `<packaging>war</packaging>` - OBLIGATORIO para Tomcat
+2. Tomcat con `scope=provided` - OBLIGATORIO
+3. Dependencia H2 - OBLIGATORIA para desarrollo
+4. `<finalName>` sin versión - RECOMENDADO
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -336,6 +270,7 @@ node_modules/
     <groupId>com.uda</groupId>
     <artifactId>nombre-proyecto</artifactId>
     <version>1.0.0</version>
+    <!-- ⚠️ CRÍTICO: WAR para despliegue en Tomcat -->
     <packaging>war</packaging>
     
     <properties>
@@ -365,6 +300,7 @@ node_modules/
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+        <!-- ⚠️ CRÍTICO: Tomcat como provided (no incluir en WAR) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -375,6 +311,13 @@ node_modules/
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
+        </dependency>
+
+        <!-- ⚠️ CRÍTICO: H2 para desarrollo sin Oracle -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
         </dependency>
         
         <!-- Lombok -->
@@ -420,6 +363,7 @@ node_modules/
     </dependencies>
     
     <build>
+        <!-- ⚠️ RECOMENDADO: Nombre sin versión para facilitar despliegue -->
         <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
@@ -452,10 +396,14 @@ node_modules/
 </project>
 ```
 
-### 2. Application.java
+### 2. ⚠️ CRÍTICO: Application.java
+
+**Esta clase DEBE extender SpringBootServletInitializer para despliegue en Tomcat.**
+
+**Ubicación:** `src/main/java/com/uda/[proyecto]/Application.java`
 
 ```java
-package com.uda.nombreproyecto;
+package com.uda.[nombre-proyecto];
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -463,64 +411,243 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 /**
- * Clase principal de la aplicación.
- * Extiende SpringBootServletInitializer para despliegue en Tomcat.
+ * Clase principal de la aplicación UDA.
+ * 
+ * IMPORTANTE: Extiende SpringBootServletInitializer para permitir
+ * despliegue como WAR en Apache Tomcat.
+ * 
+ * Sin esta extensión, la aplicación solo funcionaría como JAR standalone
+ * y NO se podría desplegar en Tomcat.
+ * 
+ * @author UDA
+ * @version 1.0.0
  */
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
     
+    /**
+     * Configura la aplicación para despliegue en contenedor servlet (Tomcat).
+     * 
+     * Este método es llamado por el contenedor servlet al iniciar la aplicación.
+     * 
+     * @param application Builder de la aplicación Spring
+     * @return Builder configurado
+     */
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(Application.class);
     }
     
+    /**
+     * Punto de entrada para ejecución standalone (desarrollo).
+     * 
+     * @param args Argumentos de línea de comandos
+     */
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 }
 ```
 
-### 3. application.yml
+**⚠️ VERIFICAR:**
+- [ ] La clase extiende `SpringBootServletInitializer`
+- [ ] Método `configure()` está sobrescrito
+- [ ] Método `main()` está presente
+- [ ] Imports correctos
+
+**Sin esto, NO se puede desplegar en Tomcat.**
+
+### 3. Configuración de Perfiles (application.yml)
+
+**La aplicación DEBE tener 3 archivos de configuración:**
+
+1. `application.yml` - Configuración base con H2 (desarrollo)
+2. `application-prod.yml` - Producción con Oracle
+
+**Nota:** El archivo base (`application.yml`) usa H2 por defecto, lo que permite desarrollo sin necesidad de Oracle instalado.
+
+---
+
+#### 3.1. ⚠️ CRÍTICO: application.yml (Desarrollo con H2)
+
+**Ubicación:** `src/main/resources/application.yml`
+
+**Este archivo es OBLIGATORIO para desarrollo sin Oracle.**
 
 ```yaml
 spring:
   application:
     name: nombre-proyecto
-    
+  # Perfil activo (se sobrescribe con variable de entorno)
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  # Configuración de H2 (base de datos en memoria)
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  # Consola H2 para debugging
+  h2:
+    console:
+      enabled: true
+      settings:
+        trace: false
+        web-allow-others: false
+      path: /h2-console
+      settings:
+        web-allow-others: false
+  
+  # Configuración JPA para H2
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop  # Recrea BD en cada inicio
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /${spring.application.name}
+  error:
+    include-message: always
+    include-binding-errors: always
+
+logging:
+  level:
+    root: DEBUG
+    com.uda: TRACE
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+```
+
+**Dependencia necesaria en pom.xml:**
+```xml
+<dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+**Acceso a H2 Console:**
+- URL: `http://localhost:8080/[nombre-proyecto]/h2-console`
+- JDBC URL: `jdbc:h2:mem:testdb`
+- Username: `sa`
+- Password: (vacío)
+
+**Ejecución:**
+```bash
+# Desarrollo (usa H2 por defecto)
+mvn spring-boot:run
+
+# O explícitamente
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+---
+
+#### 3.2. ⚠️ CRÍTICO: application-prod.yml (Producción con Oracle)
+
+**Ubicación:** `src/main/resources/application-prod.yml`
+
+**Este archivo es OBLIGATORIO para producción.**
+
+```yaml
+spring:
+  application:
+    name: nombre-proyecto
+  # Perfil activo (se sobrescribe con variable de entorno)
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  # Configuración de Oracle
   datasource:
     url: jdbc:oracle:thin:@${DB_HOST:localhost}:${DB_PORT:1521}:${DB_SID:ORCL}
     username: ${DB_USERNAME:uda_user}
     password: ${DB_PASSWORD:uda_password}
     driver-class-name: oracle.jdbc.OracleDriver
+    
+    # Pool de conexiones HikariCP
     hikari:
-      maximum-pool-size: 10
-      minimum-idle: 5
+      maximum-pool-size: ${DB_POOL_SIZE:20}
+      minimum-idle: ${DB_POOL_MIN_IDLE:5}
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
   
+  # Configuración JPA para Oracle
   jpa:
-    database-platform: org.hibernate.dialect.OracleDialect
+    database-platform: org.hibernate.dialect.Oracle12cDialect
     hibernate:
-      ddl-auto: validate
+      ddl-auto: validate  # NO modificar BD en producción
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+        query:
+          in_clause_parameter_padding: true
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
   servlet:
     context-path: /${spring.application.name}
-
-jwt:
-  secret: ${JWT_SECRET:default-secret-key-change-in-production}
-  expiration: 86400000
+  error:
+    include-message: always
+    include-binding-errors: always
 
 logging:
   level:
-    root: INFO
-    com.uda: DEBUG
+    root: WARN
+    com.uda: INFO
+    org.hibernate: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+  file:
+    name: logs/application.log
+    max-size: 10MB
+    max-history: 30
 ```
+
+**Archivo .env.prod.example (documentar variables):**
+
+```bash
+# Base de datos Oracle
+DB_HOST=oracle-prod.example.com
+DB_PORT=1521
+DB_SID=PROD
+DB_USERNAME=uda_prod_user
+DB_PASSWORD=CHANGE_THIS_PASSWORD
+
+# Pool de conexiones
+DB_POOL_SIZE=20
+DB_POOL_MIN_IDLE=5
+
+# Servidor
+SERVER_PORT=8080
+SPRING_PROFILES_ACTIVE=prod
+
+# JWT (si se usa)
+JWT_SECRET=CHANGE_THIS_SECRET_KEY_MIN_256_BITS
+JWT_EXPIRATION=86400000
+```
+
+**⚠️ IMPORTANTE:** 
+- En desarrollo: `mvn spring-boot:run` (usa application.yml con H2)
+- En producción: Configurar variable `SPRING_PROFILES_ACTIVE=prod` (usa application-prod.yml con Oracle)
 
 ### 4. Entidad
 
@@ -596,6 +723,27 @@ public class Producto {
 ```
 
 ### 5. DTO (Data Transfer Object)
+
+#### ⚠️ ELEMENTO CRÍTICO: Validaciones en DTOs
+
+**Todos los DTOs DEBEN tener validaciones Bean Validation.**
+
+**Problema que resuelve:**
+Sin validaciones, datos inválidos llegan a la base de datos:
+- Strings vacíos donde no deberían
+- Números negativos donde deben ser positivos
+- Emails inválidos
+- Etc.
+
+**Validaciones obligatorias:**
+- `@NotNull` / `@NotBlank` en campos obligatorios
+- `@Size` en strings con límites
+- `@Min` / `@Max` en números con rangos
+- `@Email` en emails
+- `@Pattern` para formatos específicos
+- Mensajes descriptivos en español
+
+**Ejemplo completo:**
 
 ```java
 package com.uda.nombreproyecto.dto;
@@ -1101,6 +1249,17 @@ public class ProductoController {
 ```
 
 ### 11. Exception Handling
+
+#### ⚠️ ELEMENTO CRÍTICO: GlobalExceptionHandler
+
+**Este componente es OBLIGATORIO para manejo correcto de errores.**
+
+**Problema que resuelve:**
+- Sin este handler, los stack traces completos se envían al cliente (riesgo de seguridad)
+- Los mensajes de error no son consistentes
+- Difícil debugging en producción
+
+**Primero, crear las excepciones personalizadas:**
 
 ```java
 package com.uda.nombreproyecto.exception;
@@ -1919,6 +2078,44 @@ function Home() {
 
 export default Home;
 ```
+
+## UI Standards y Design System
+
+### Design System Oficial: Material-UI (MUI)
+
+Todas las aplicaciones UDA **DEBEN** usar Material-UI como design system único.
+
+**📖 Documentación completa**: [ESTANDARES_UI.md](ESTANDARES_UI.md)
+
+### Resumen de Reglas
+
+✅ **SIEMPRE**:
+- Usar componentes de MUI
+- Aplicar el tema UDA estandarizado
+- Usar `sx` prop para estilos
+- Usar `theme.spacing()` para espaciado
+- Usar `theme.palette.*` para colores
+
+❌ **NUNCA**:
+- Crear componentes desde cero
+- Usar estilos inline
+- Hardcodear colores o espaciados
+- Mezclar HTML nativo con MUI
+
+### Tema UDA
+
+El tema debe estar en `frontend/src/theme/` con la siguiente estructura:
+
+```
+frontend/src/theme/
+├── index.js           # Tema principal
+├── palette.js         # Colores
+├── typography.js      # Tipografía
+├── components.js      # Overrides de componentes
+└── shadows.js         # Sombras
+```
+
+**Ver implementación completa**: [ESTANDARES_UI.md](ESTANDARES_UI.md)
 
 ## Base de Datos
 
@@ -2868,41 +3065,110 @@ chmod +x deploy.sh
 
 ## Checklist de Generación
 
+### ⚠️ Elementos Críticos (OBLIGATORIO)
+
+**Verificar ANTES de continuar:**
+
+#### Backend Crítico (5 elementos)
+- [ ] ⚠️ **JacksonConfig.java** existe en `config/` y está completo
+- [ ] ⚠️ **application.yml** existe con H2 configurado
+- [ ] ⚠️ **application-prod.yml** existe con Oracle configurado
+- [ ] ⚠️ **Application.java** extiende SpringBootServletInitializer
+- [ ] ⚠️ **pom.xml** tiene:
+  - [ ] `<packaging>war</packaging>`
+  - [ ] Tomcat con `scope=provided`
+  - [ ] Dependencia H2
+  - [ ] `<finalName>` sin versión
+
+#### Manejo de Errores (1 elemento)
+- [ ] ⚠️ **GlobalExceptionHandler** existe y maneja:
+  - [ ] ResourceNotFoundException (404)
+  - [ ] MethodArgumentNotValidException (400)
+  - [ ] Exception genérica (500)
+
+#### Validaciones (2 elementos)
+- [ ] ⚠️ **Validaciones en DTOs**: Todos los DTOs tienen Bean Validation
+- [ ] ⚠️ **validationSchemas.js**: Existe con Yup (si hay formularios)
+
+**SI FALTA ALGUNO: DETENER Y CORREGIR ANTES DE CONTINUAR**
+
 ### Backend Mínimo
 - [ ] `pom.xml` con todas las dependencias y configuración de plugins
 - [ ] `Application.java` extendiendo `SpringBootServletInitializer`
 - [ ] `application.yml` con configuración completa de Oracle
 - [ ] `SecurityConfig.java` y `WebConfig.java`
-- [ ] Entidad `Producto` completa con anotaciones JPA
-- [ ] `ProductoDTO` con validaciones Bean Validation
-- [ ] `ProductoMapper` con MapStruct
-- [ ] `ProductoRepository` extendiendo JpaRepository
-- [ ] `ProductoService` (interfaz) y `ProductoServiceImpl`
-- [ ] `ProductoController` con todos los endpoints CRUD
+- [ ] Al menos 1 entidad completa con:
+  - [ ] Entity con anotaciones JPA
+  - [ ] DTO con validaciones Bean Validation
+  - [ ] Mapper con MapStruct
+  - [ ] Repository con métodos personalizados
+  - [ ] Service interface e implementación
+  - [ ] Controller con endpoints REST y @Valid
 - [ ] `GlobalExceptionHandler` con manejo de errores
 - [ ] `ResourceNotFoundException` y `ErrorResponse`
 
 ### Frontend Mínimo
-- [ ] `package.json` con todas las dependencias
-- [ ] `vite.config.js` con proxy configurado
-- [ ] `api.js` con Axios e interceptores
-- [ ] `productoService.js` con todos los métodos CRUD
-- [ ] `theme.js` con configuración de Material UI
-- [ ] `App.jsx` con routing completo
-- [ ] `ProductoList.jsx` con tabla y búsqueda
-- [ ] `ProductoForm.jsx` con validación usando react-hook-form y yup
-- [ ] `Home.jsx` (página de inicio)
+- [ ] `package.json` con dependencias (incluyendo yup)
+- [ ] `vite.config.js` configurado
+- [ ] `theme.js` con tema de Material UI
+- [ ] `api.js` con Axios configurado
+- [ ] `validationSchemas.js` con Yup
+- [ ] Al menos un servicio completo
+- [ ] `App.jsx` con routing
+- [ ] `Header.jsx`
+- [ ] `Footer.jsx`
+- [ ] Página de listado funcional
+- [ ] Página de formulario funcional con validación Yup
+- [ ] Archivos .env para diferentes entornos
 
 ### Base de Datos
-- [ ] Script SQL con secuencia `PRODUCTO_SEQ`
-- [ ] Tabla `PRODUCTOS` con todas las columnas
-- [ ] Constraints (PK, CK) con nombres apropiados
-- [ ] Índices en columnas clave
-- [ ] Comentarios en tabla y columnas
-- [ ] Datos de ejemplo (al menos 3 registros)
+- [ ] Script SQL de creación de tablas
+- [ ] Secuencias para IDs
+- [ ] Índices apropiados
+- [ ] Constraints (PK, FK, UK, CK)
+- [ ] Comentarios en tablas y columnas
+- [ ] Datos de ejemplo (opcional)
 
 ### Documentación
-- [ ] `README.md` con instrucciones completas de instalación y ejecución
+- [ ] `README.md` con instrucciones de instalación
+- [ ] Comentarios JavaDoc en clases Java
+- [ ] Comentarios JSDoc en funciones JavaScript
+- [ ] Variables de entorno documentadas en .env.example
+
+### Despliegue
+- [ ] Configuración para generar WAR
+- [ ] Scripts de build
+- [ ] Variables de entorno documentadas
+- [ ] Perfiles de Spring (dev, prod)
+
+---
+
+### ✅ Verificación Final
+
+**Ejecutar estos comandos para verificar:**
+
+```bash
+# Backend: Verificar que compila y genera WAR
+cd backend
+mvn clean package
+ls -lh target/*.war  # Debe existir archivo .war
+
+# Backend: Verificar que funciona con H2 (perfil dev por defecto)
+mvn spring-boot:run
+# Acceder a: http://localhost:8080/[nombre-proyecto]/h2-console
+
+# Frontend: Verificar que compila
+cd frontend
+npm install
+npm run build
+ls -lh dist/  # Debe existir carpeta con archivos
+
+# Frontend: Verificar que funciona
+npm run dev
+# Acceder a: http://localhost:5173
+```
+
+**Si algún comando falla, revisar los elementos críticos.**
 
 ---
 
@@ -2931,3 +3197,42 @@ sqlplus usuario/password@localhost:1521/ORCL
 ---
 
 **Importante para IAs**: Este documento contiene las especificaciones completas y ejemplos de código funcional. Seguir **todas** las indicaciones al pie de la letra para garantizar consistencia y funcionalidad.
+
+---
+
+## ✅ Validación del Código Generado
+
+Una vez generada la aplicación siguiendo esta especificación, **valida el código** usando:
+
+### [GUIA_VALIDACION.md](GUIA_VALIDACION.md)
+
+Esta guía proporciona:
+
+1. **12 pasos de validación detallados** con ejemplos
+2. **Sistema de puntuación 0-100** con criterios claros
+3. **Elementos críticos obligatorios** (55 puntos)
+4. **Errores comunes** con soluciones
+5. **Plantilla de reporte** de validación
+6. **Comandos útiles** para testing
+
+**Puntuación mínima requerida:** 80/100
+
+### Validación Rápida
+
+```bash
+# Backend
+cd backend
+mvn clean compile  # Debe compilar sin errores
+mvn test          # Tests deben pasar
+
+# Frontend
+cd frontend
+npm install       # Debe instalar sin errores
+npm run build     # Debe compilar sin errores
+npm test          # Tests deben pasar
+```
+
+Para validación completa, sigue todos los pasos de [GUIA_VALIDACION.md](GUIA_VALIDACION.md)
+
+---
+```

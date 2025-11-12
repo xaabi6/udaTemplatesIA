@@ -6,6 +6,8 @@ Manual de instrucciones para IAs que garantiza la generación consistente de apl
 
 Este repositorio es un **sistema de referencia completo** que permite a cualquier IA (ChatGPT, Claude, Cody, etc.) generar aplicaciones UDA de forma consistente simplemente referenciando este repositorio.
 
+**📖 Ver detalles completos en:** [REGLAS_GENERACION.md](REGLAS_GENERACION.md#elementos-críticos-obligatorios)
+
 **Objetivo**: Que cualquier desarrollador pueda decir a una IA:
 
 > *"Genera una aplicación siguiendo las especificaciones de https://github.com/xaabi6/udaTemplatesIA"*
@@ -13,8 +15,6 @@ Este repositorio es un **sistema de referencia completo** que permite a cualquie
 Y obtener **siempre** el mismo resultado: una aplicación Spring Boot 3.5.x + Java 21 LTS + React + Material Design + Oracle + Tomcat, con los estándares de calidad UDA.
 
 ## 🎯 Stack Tecnológico Definido
-
-Las aplicaciones generadas seguirán **siempre** este stack:
 
 ### Backend
 - **Framework**: Spring Boot 3.5.x
@@ -38,8 +38,6 @@ Las aplicaciones generadas seguirán **siempre** este stack:
 
 ### Para Desarrolladores
 
-Simplemente indica a tu IA:
-
 ```
 Genera una aplicación completa siguiendo las especificaciones del repositorio:
 https://github.com/xaabi6/udaTemplatesIA
@@ -49,8 +47,6 @@ Entidad principal: Libro
 Campos: titulo, autor, isbn, precio, stock, categoria
 ```
 
-La IA consultará este repositorio y generará la aplicación completa siguiendo todas las especificaciones.
-
 ### Para IAs
 
 Si eres una IA procesando esta solicitud:
@@ -58,8 +54,10 @@ Si eres una IA procesando esta solicitud:
 1. **Lee completamente** el archivo `ESPECIFICACION_COMPLETA.md`
 2. **Aplica** todas las reglas definidas en `REGLAS_GENERACION.md`
 3. **Sigue** la estructura exacta de `ESTRUCTURA_PROYECTO.md`
-4. **Valida** el código generado contra `CHECKLIST_CALIDAD.md`
-5. **Consulta** `MIGRACION_H2_A_ORACLE.md` para configuración de base de datos
+4. **Aplica** los estándares de UI definidos en `ESTANDARES_UI.md`
+5. **Comprueba** el código generado contra `CHECKLIST_CALIDAD.md`
+6. **Valida** el código generado con `GUIA_VALIDACION.md` (puntuación mínima: 80/100)
+7. **Consulta** `MIGRACION_H2_A_ORACLE.md` para configuración de base de datos
 
 ## 📁 Estructura del Repositorio
 
@@ -70,78 +68,66 @@ udaTemplatesIA/
 ├── REGLAS_GENERACION.md              # Reglas que la IA debe seguir
 ├── CHECKLIST_CALIDAD.md              # Validación de calidad
 ├── ESTRUCTURA_PROYECTO.md            # Estructura de carpetas y archivos
+├── ESTANDARES_UI.md                  # Estándares de UI
+├── GUIA_VALIDACION.md                # Guía de validación paso a paso
 ├── MIGRACION_H2_A_ORACLE.md          # Guía de migración de base de datos
-├── docs/
-│   ├── backend/
-│   │   ├── spring-boot-config.md
-│   │   ├── oracle-integration.md
-│   │   ├── rest-api-standards.md
-│   │   └── security-config.md
-│   ├── frontend/
-│   │   ├── react-structure.md
-│   │   ├── material-ui-setup.md
-│   │   └── api-integration.md
-│   ├── database/
-│   │   ├── oracle-schema.md
-│   │   └── jpa-entities.md
-│   ├── deployment/
-│   │   ├── tomcat-config.md
-│   │   └── build-process.md
-│   └── testing/
-│       ├── backend-tests.md
-│       └── frontend-tests.md
-└── examples/
-    └── app-ejemplo/              # Aplicación de referencia generada
+├── docs/                             # Documentación técnica detallada
+└── examples/                         # Aplicaciones de referencia
 ```
 
 ## 📄 Documentos Principales
 
 ### 1. [ESPECIFICACION_COMPLETA.md](ESPECIFICACION_COMPLETA.md)
-Documento maestro con **todas** las especificaciones técnicas que la IA debe implementar:
-- Configuración de Spring Boot 3.5.x + Java 21 LTS
-- Estructura de entidades, DTOs, mappers, servicios y controladores
-- Configuración de seguridad con JWT
-- Integración con Oracle Database
-- Frontend React + Material UI
-- Testing completo
+Documento maestro con **todas** las especificaciones técnicas que la IA debe implementar.
+
+**🔴 IMPORTANTE:** Todas las secciones marcadas con ⚠️ CRÍTICO son obligatorias.
 
 ### 2. [REGLAS_GENERACION.md](REGLAS_GENERACION.md)
 Reglas estrictas que la IA debe seguir durante la generación:
+- ⚠️ **Elementos Críticos Obligatorios** (8 elementos que NO pueden faltar)
 - ⚠️ **IMPORTANTE**: Uso obligatorio de `jakarta.*` (NO `javax.*`)
-- Convenciones de nomenclatura (Java, React, SQL)
-- Estructura de código y patrones obligatorios
-- Prohibiciones absolutas
-- Orden de generación de archivos
+- Convenciones de nomenclatura y patrones obligatorios
+- Prohibiciones absolutas y orden de generación
 
-### 3. [ESTRUCTURA_PROYECTO.md](ESTRUCTURA_PROYECTO.md)
-Estructura exacta de carpetas y archivos que debe generar la IA:
-- Árbol completo de directorios
-- Archivos obligatorios y opcionales
-- Convenciones de nomenclatura por tecnología
-- Archivos de configuración estándar
+**🔴 IMPORTANTE:** Contiene la lista de 8 elementos críticos con código de ejemplo.
 
-### 4. [CHECKLIST_CALIDAD.md](CHECKLIST_CALIDAD.md)
+### 3. [CHECKLIST_CALIDAD.md](CHECKLIST_CALIDAD.md)
 Lista de verificación exhaustiva que la IA debe completar antes de entregar:
-- Checklist de backend (configuración, entidades, servicios, controladores)
-- Checklist de frontend (componentes, servicios, hooks, contextos)
-- Checklist de base de datos (scripts, secuencias, índices)
-- Checklist de testing y documentación
-- Métricas de calidad
+- ⚠️ **Verificación de Elementos Críticos** (55 puntos - PASO 0 obligatorio)
+- Checklist completo de backend, frontend, base de datos y testing
 
-### 5. [MIGRACION_H2_A_ORACLE.md](MIGRACION_H2_A_ORACLE.md)
-Guía completa para migración de base de datos:
-- Configuración de H2 para desarrollo rápido
-- Configuración de Oracle para producción
-- Uso de perfiles de Spring (`dev`, `prod`)
-- Diferencias importantes entre H2 y Oracle
-- Scripts SQL de migración
-- Docker Compose para desarrollo
-- Solución de problemas comunes
+**🔴 IMPORTANTE:** El PASO 0 (elementos críticos) debe completarse ANTES del resto.
+
+### 4. [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
+Guía paso a paso para validar el código generado:
+- ⚠️ **6 pasos de validación detallados** con ejemplos de código
+- ⚠️ **Sistema de puntuación 0-100** con criterios claros
+- Errores comunes con soluciones y plantilla de reporte
+
+**🔴 IMPORTANTE:** Usar esta guía para **auto-validar** el código antes de entregar. Puntuación mínima requerida: **80/100**.
+
+### 5. [ESTRUCTURA_PROYECTO.md](ESTRUCTURA_PROYECTO.md)
+Estructura exacta de carpetas y archivos que debe generar la IA.
+
+### 6. [ESTANDARES_UI.md](ESTANDARES_UI.md)
+Estándares de diseño y UI usando Material-UI como design system oficial.
+
+### 7. [MIGRACION_H2_A_ORACLE.md](MIGRACION_H2_A_ORACLE.md)
+Guía completa para migración de base de datos entre H2 (desarrollo) y Oracle (producción).
 
 ## ✅ Garantías
 
 Al usar este repositorio como referencia, se garantiza:
 
+### Elementos Críticos
+- ✅ **JacksonConfig.java**: Fechas serializadas correctamente como ISO-8601
+- ✅ **H2 en desarrollo**: Desarrollo sin necesidad de Oracle instalado
+- ✅ **Oracle en producción**: Configuración completa y optimizada
+- ✅ **Despliegue en Tomcat**: WAR funcional listo para producción
+- ✅ **Manejo de errores**: GlobalExceptionHandler completo
+- ✅ **Validaciones**: Backend y frontend con validaciones robustas
+
+### Calidad General
 - ✅ **Consistencia**: Misma estructura siempre
 - ✅ **Calidad**: Código que cumple estándares UDA
 - ✅ **Completitud**: Aplicación funcional lista para desplegar
@@ -150,49 +136,11 @@ Al usar este repositorio como referencia, se garantiza:
 - ✅ **Desplegable**: Configurado para Tomcat desde el inicio
 - ✅ **Flexibilidad**: H2 para desarrollo, Oracle para producción
 
-## 🔄 Versionado
-
-Este repositorio sigue versionado semántico:
-- **Major**: Cambios en stack tecnológico
-- **Minor**: Nuevas funcionalidades o mejoras
-- **Patch**: Correcciones y aclaraciones
-
-**Versión actual**: 1.0.0
-
-## 🎓 Características Destacadas
-
-### Backend
-- ✅ Spring Boot 3.5.x con Java 21 LTS
-- ✅ Jakarta EE (NO javax - importante para Spring Boot 3.x)
-- ✅ JPA + Hibernate con Oracle Dialect
-- ✅ H2 para desarrollo, Oracle para producción
-- ✅ Spring Security + JWT
-- ✅ MapStruct para mapeo de DTOs
-- ✅ Lombok para reducir boilerplate
-- ✅ Validaciones Bean Validation
-- ✅ Manejo global de excepciones
-- ✅ JacksonConfig para serialización correcta de fechas
-- ✅ Tests unitarios y de integración
-
-### Frontend
-- ✅ React 18 con Vite
-- ✅ Material UI 5 (MUI)
-- ✅ React Router 6
-- ✅ Axios para llamadas API
-- ✅ React Hook Form + Yup
-- ✅ Context API para estado global
-- ✅ Custom Hooks reutilizables
-- ✅ Componentes optimizados con React.memo
-- ✅ Manejo de errores robusto
-- ✅ Tests con Vitest + React Testing Library
-
-### Base de Datos
-- ✅ Soporte dual: H2 (desarrollo) + Oracle (producción)
-- ✅ Scripts SQL versionados
-- ✅ Secuencias Oracle
-- ✅ Índices optimizados
-- ✅ Constraints con nombres
-- ✅ Datos de prueba incluidos
+### Verificación
+- ✅ **Compilación**: `mvn clean package` genera WAR sin errores
+- ✅ **Ejecución dev**: `mvn spring-boot:run` funciona con H2 (desarrollo - perfil por defecto)
+- ✅ **Frontend**: `npm run build` genera dist/ sin errores
+- ✅ **Tests**: `mvn test` y `npm test` pasan correctamente
 
 ## 🚀 Inicio Rápido
 
@@ -200,25 +148,22 @@ Este repositorio sigue versionado semántico:
 
 ```bash
 # 1. Pedir a una IA que genere la aplicación
-# Prompt sugerido:
 "Genera una aplicación completa siguiendo:
 https://github.com/xaabi6/udaTemplatesIA
 
 Proyecto: mi-proyecto
 Entidad: MiEntidad (campo1, campo2, campo3)"
 
-# 2. La IA generará toda la estructura
-
-# 3. Ejecutar backend (con H2)
+# 2. Ejecutar backend (con H2)
 cd backend
 mvn spring-boot:run
 
-# 4. Ejecutar frontend
+# 3. Ejecutar frontend
 cd frontend
 npm install
 npm run dev
 
-# 5. Acceder a la aplicación
+# 4. Acceder a la aplicación
 # Backend: http://localhost:8080/mi-proyecto/api/v1
 # Frontend: http://localhost:5173
 # H2 Console: http://localhost:8080/mi-proyecto/h2-console
@@ -228,49 +173,154 @@ npm run dev
 
 ```bash
 # 1. Consultar MIGRACION_H2_A_ORACLE.md
-
 # 2. Configurar Oracle (Docker recomendado)
 docker-compose up -d
-
 # 3. Ejecutar con perfil de producción
 mvn spring-boot:run -Dspring-boot.run.profiles=prod
 ```
 
-## 📚 Documentación Adicional
+## 🔍 Validación del Código Generado
 
-### Guías Específicas
+Después de generar una aplicación, **valida que cumple todos los estándares UDA** usando [GUIA_VALIDACION.md](GUIA_VALIDACION.md).
 
-- **Configuración de Spring Boot**: Ver `ESPECIFICACION_COMPLETA.md` sección Backend
-- **Configuración de React**: Ver `ESPECIFICACION_COMPLETA.md` sección Frontend
-- **Seguridad y JWT**: Ver `ESPECIFICACION_COMPLETA.md` sección Seguridad
-- **Testing**: Ver `ESPECIFICACION_COMPLETA.md` sección Testing
-- **Despliegue**: Ver `ESPECIFICACION_COMPLETA.md` sección Despliegue
-- **Migración de BD**: Ver `MIGRACION_H2_A_ORACLE.md`
+### Sistema de Puntuación
 
-### Recursos Externos
+| Categoría | Puntos | Descripción |
+|-----------|--------|-------------|
+| **Elementos Críticos** | 55 | OBLIGATORIOS - PASO 0 |
+| **Criterios Obligatorios** | 15 | Compilación, CRUD, Estructura |
+| **Criterios Recomendados** | 30 | Tests, Seguridad, Documentación |
+| **TOTAL** | 100 | Mínimo requerido: **80/100** |
 
-- **Spring Boot**: https://spring.io/projects/spring-boot
-- **React**: https://react.dev/
-- **Material UI**: https://mui.com/
-- **Oracle Database**: https://docs.oracle.com/en/database/
+### Validación Rápida (5 minutos)
+
+```bash
+# 1. Verificar que el backend compila y genera WAR
+cd backend && mvn clean package
+ls -lh target/*.war  # ✅ Debe existir archivo .war
+
+# 2. Verificar que funciona con H2 (desarrollo)
+mvn spring-boot:run
+# ✅ Acceder a: http://localhost:8080/[nombre-proyecto]/h2-console
+
+# 3. Verificar que el frontend compila
+cd ../frontend && npm install && npm run build
+ls -lh dist/  # ✅ Debe existir carpeta con archivos
+
+# 4. Verificar que el frontend funciona
+npm run dev
+# ✅ Acceder a: http://localhost:5173
+```
+
+## ⚠️ Elementos Críticos Obligatorios
+
+**Este repositorio define 8 elementos CRÍTICOS que son OBLIGATORIOS en toda aplicación UDA.**
+
+Ver detalles completos en [REGLAS_GENERACION.md](REGLAS_GENERACION.md#elementos-críticos-obligatorios).
+
+**Si una IA genera código sin estos elementos, la aplicación NO funcionará:**
+
+| # | Elemento | ¿Por qué es crítico? |
+|---|----------|---------------------|
+| 1 | JacksonConfig.java | Fechas se serializan mal sin esto |
+| 2 | application.yml con H2 | No se puede desarrollar sin Oracle |
+| 3 | application-prod.yml con Oracle | No funciona en producción |
+| 4 | SpringBootServletInitializer | No se puede desplegar en Tomcat |
+| 5 | packaging WAR | Genera JAR en lugar de WAR |
+| 6 | GlobalExceptionHandler | Errores mal manejados |
+| 7 | Validaciones en DTOs | Datos inválidos llegan a BD |
+| 8 | Validaciones Yup | Validación insuficiente |
+
+## 📊 Para IAs: Proceso de Generación
+
+### Checklist Rápido de Validación
+
+```
+[ ] ✅ JacksonConfig.java existe
+[ ] ✅ application.yml con H2 configurado
+[ ] ✅ application-prod.yml con Oracle configurado
+[ ] ✅ Application.java extiende SpringBootServletInitializer
+[ ] ✅ pom.xml tiene <packaging>war</packaging>
+[ ] ✅ GlobalExceptionHandler.java completo
+[ ] ✅ DTOs tienen validaciones (@NotNull, @NotBlank, etc.)
+[ ] ✅ validationSchemas.js con schemas Yup
+```
+
+**Puntuación:**
+- **8/8:** ✅ EXCELENTE - Código listo para entregar
+- **6-7/8:** ⚠️ ACEPTABLE - Corregir faltantes
+- **< 6/8:** ❌ INSUFICIENTE - NO entregar, revisar documentación
+
+### Flujo de Generación
+
+```
+PASO 0: Confirmar 8 elementos críticos
+    ↓
+PASO 1: Leer documentación (ESPECIFICACION_COMPLETA.md, REGLAS_GENERACION.md)
+    ↓
+PASO 2: Generar código en orden (configuración crítica primero)
+    ↓
+PASO 3: Validar con CHECKLIST_CALIDAD.md (mínimo 45/55 puntos)
+    ↓
+PASO 4: Entregar código
+```
+
+**SI NO ESTÁS SEGURO DE ALGUNO: DETENTE Y REVISA [REGLAS_GENERACION.md](REGLAS_GENERACION.md)**
+
+## ❓ Preguntas Frecuentes
+
+### Para Desarrolladores
+
+**P: ¿Por qué usa H2 en lugar de Oracle para desarrollo?**
+R: H2 es una base de datos en memoria que no requiere instalación. Permite desarrollar sin necesidad de tener Oracle instalado localmente.
+
+**P: ¿Cómo cambio entre H2 y Oracle?**
+R: 
+- Desarrollo (H2): `mvn spring-boot:run` (usa application.yml)
+- Producción (Oracle): Configurar `SPRING_PROFILES_ACTIVE=prod` (usa application-prod.yml)
+
+**P: ¿Por qué el WAR y no JAR?**
+R: El WAR permite despliegue en Apache Tomcat, que es el servidor de aplicaciones estándar en UDA.
+
+### Para IAs
+
+**P: ¿En qué orden debo leer los documentos?**
+R: 
+1. ESPECIFICACION_COMPLETA.md (stack + código)
+2. REGLAS_GENERACION.md (reglas + orden)
+3. CHECKLIST_CALIDAD.md (validación)
+4. ESTRUCTURA_PROYECTO.md (ubicaciones)
+
+**P: ¿Qué hago si no estoy seguro de un elemento crítico?**
+R: Inclúyelo. Es mejor incluir un elemento de más que omitir uno crítico. Consulta REGLAS_GENERACION.md para ver el código de ejemplo.
+
+**P: ¿Puedo omitir validaciones si el usuario no las pidió?**
+R: NO. Las validaciones (Bean Validation en DTOs y Yup en frontend) son elementos críticos obligatorios.
+
+## 📞 Soporte
+
+### Para Desarrolladores
+Si encuentras problemas con el código generado:
+1. Verifica los 8 elementos críticos
+2. Ejecuta los comandos de verificación rápida
+3. Consulta CHECKLIST_CALIDAD.md
+
+### Para IAs
+Si tienes dudas durante la generación:
+1. Consulta REGLAS_GENERACION.md sección "Elementos Críticos"
+2. Revisa ESPECIFICACION_COMPLETA.md secciones marcadas con ⚠️
+3. Usa GUIA_VALIDACION.md para auto-validación paso a paso
+4. En caso de duda, incluye el elemento (mejor sobrar que faltar)
+
+**Antes de entregar:** Ejecuta PASO 0 de VALIDATION_GUIDE.md (debe obtener 55/55 puntos)
 
 ## 🤝 Contribuir
 
-Para proponer mejoras a las especificaciones:
-
+Para proponer mejoras:
 1. Fork el repositorio
 2. Crea una rama para tu mejora
 3. Realiza los cambios en los documentos correspondientes
-4. Asegúrate de que la mejora es consistente con el resto de plantillas
-5. Envía un Pull Request con descripción detallada
-
-### Áreas de Contribución
-
-- 📝 Mejoras en documentación
-- 🐛 Corrección de errores en especificaciones
-- ✨ Nuevas funcionalidades (con justificación)
-- 🧪 Aplicaciones de ejemplo
-- 📊 Casos de uso adicionales
+4. Envía un Pull Request con descripción detallada
 
 ## 📞 Contacto
 
@@ -284,20 +334,19 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 
 ---
 
-## ⚠️ Notas Importantes
+## ⚠️ Nota Final
 
 ### Para IAs
 
-Este repositorio es tu **fuente de verdad**. Debes:
+**Los 8 elementos críticos son OBLIGATORIOS y NO NEGOCIABLES.**
 
-1. ✅ Leer **TODOS** los documentos antes de generar
-2. ✅ Seguir **EXACTAMENTE** las especificaciones
-3. ✅ Usar **Java 21 LTS** (NO Java 17 ni Java 25)
-4. ✅ Usar **jakarta.*** (NO javax.* - Spring Boot 3.x)
-5. ✅ Incluir **JacksonConfig** para fechas
-6. ✅ Configurar **H2 y Oracle** con perfiles
-7. ✅ Validar contra **CHECKLIST_CALIDAD.md**
-8. ✅ Generar **código funcional y compilable**
+**Este repositorio es tu fuente de verdad:**
+- ✅ Sigue **todas** las especificaciones al pie de la letra
+- ✅ No omitas ningún elemento crítico
+- ✅ Valida antes de entregar
+- ✅ Si tienes dudas, consulta REGLAS_GENERACION.md
+
+**Garantía de calidad:** Si sigues este proceso, el código generado será consistente, funcional y listo para producción.
 
 ### Para Desarrolladores
 
@@ -306,7 +355,3 @@ Este repositorio es tu **fuente de verdad**. Debes:
 - 💡 Todas las aplicaciones generadas tendrán la **misma estructura**
 - 💡 El código generado es **mantenible y escalable**
 - 💡 Incluye **tests básicos** para empezar
-
----
-
-**Importante para IAs**: Este repositorio es tu fuente de verdad. Sigue **todas** las especificaciones al pie de la letra para garantizar consistencia entre generaciones.

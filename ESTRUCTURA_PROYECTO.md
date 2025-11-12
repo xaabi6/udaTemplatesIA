@@ -65,219 +65,41 @@ proyecto-uda/
 │
 ├── backend/
 │   ├── pom.xml
-│   ├── README.md
-│   ├── .gitignore
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   └── com/
-│   │   │   │       └── uda/
-│   │   │   │           └── [nombre-proyecto]/
-│   │   │   │               ├── Application.java
-│   │   │   │               │
-│   │   │   │               ├── config/
-│   │   │   │               │   ├── SecurityConfig.java
-│   │   │   │               │   ├── WebConfig.java
-│   │   │   │               │   ├── JacksonConfig.java
-│   │   │   │               │   ├── DatabaseConfig.java
-│   │   │   │               │   ├── OpenAPIConfig.java
-│   │   │   │               │   └── CorsConfig.java
-│   │   │   │               │
-│   │   │   │               ├── controller/
-│   │   │   │               │   ├── AuthController.java
-│   │   │   │               │   └── [Entidad]Controller.java
-│   │   │   │               │
-│   │   │   │               ├── service/
-│   │   │   │               │   ├── [Entidad]Service.java
-│   │   │   │               │   └── impl/
-│   │   │   │               │       └── [Entidad]ServiceImpl.java
-│   │   │   │               │
-│   │   │   │               ├── repository/
-│   │   │   │               │   └── [Entidad]Repository.java
-│   │   │   │               │
-│   │   │   │               ├── entity/
-│   │   │   │               │   ├── BaseEntity.java
-│   │   │   │               │   ├── Usuario.java
-│   │   │   │               │   ├── Rol.java
-│   │   │   │               │   └── [Entidad].java
-│   │   │   │               │
-│   │   │   │               ├── dto/
-│   │   │   │               │   ├── [Entidad]DTO.java
-│   │   │   │               │   ├── [Entidad]RequestDTO.java
-│   │   │   │               │   ├── LoginRequestDTO.java
-│   │   │   │               │   ├── LoginResponseDTO.java
-│   │   │   │               │   ├── RegisterRequestDTO.java
-│   │   │   │               │   ├── PageResponse.java
-│   │   │   │               │   └── ErrorResponse.java
-│   │   │   │               │
-│   │   │   │               ├── mapper/
-│   │   │   │               │   └── [Entidad]Mapper.java
-│   │   │   │               │
-│   │   │   │               ├── exception/
-│   │   │   │               │   ├── GlobalExceptionHandler.java
-│   │   │   │               │   ├── ResourceNotFoundException.java
-│   │   │   │               │   ├── BusinessException.java
-│   │   │   │               │   └── ValidationException.java
-│   │   │   │               │
-│   │   │   │               ├── security/
-│   │   │   │               │   ├── JwtUtil.java
-│   │   │   │               │   ├── JwtRequestFilter.java
-│   │   │   │               │   └── UserDetailsServiceImpl.java
-│   │   │   │               │
-│   │   │   │               ├── specification/
-│   │   │   │               │   └── [Entidad]Specification.java
-│   │   │   │               │
-│   │   │   │               ├── aspect/
-│   │   │   │               │   └── LoggingAspect.java
-│   │   │   │               │
-│   │   │   │               └── util/
-│   │   │   │                   └── Constants.java
-│   │   │   │
-│   │   │   └── resources/
-│   │   │       ├── application.yml
-│   │   │       ├── application-dev.yml
-│   │   │       ├── application-prod.yml
-│   │   │       ├── logback-spring.xml
-│   │   │       ├── banner.txt
-│   │   │       ├── db/
-│   │   │       │   └── migration/
-│   │   │       │       ├── V1__initial_schema.sql
-│   │   │       │       └── V2__insert_roles.sql
-│   │   │       └── static/
-│   │   │           └── .gitkeep
-│   │   │
-│   │   └── test/
-│   │       └── java/
-│   │           └── com/
-│   │               └── uda/
-│   │                   └── [nombre-proyecto]/
-│   │                       ├── ApplicationTests.java
-│   │                       ├── controller/
-│   │                       │   └── [Entidad]ControllerTest.java
-│   │                       ├── service/
-│   │                       │   └── [Entidad]ServiceTest.java
-│   │                       └── repository/
-│   │                           └── [Entidad]RepositoryTest.java
-│   │
-│   └── target/
-│       └── .gitkeep
+│   └── src/main/
+│       ├── java/com/uda/[proyecto]/
+│       │   ├── Application.java
+│       │   ├── config/          # JacksonConfig, SecurityConfig, etc.
+│       │   ├── controller/      # REST Controllers
+│       │   ├── service/         # Business logic
+│       │   ├── repository/      # Data access
+│       │   ├── entity/          # JPA entities
+│       │   ├── dto/             # Data transfer objects
+│       │   ├── mapper/          # MapStruct mappers
+│       │   ├── exception/       # Exception handlers
+│       │   └── security/        # JWT, filters
+│       └── resources/
+│           ├── application.yml
+│           ├── application-prod.yml
+│           └── db/migration/    # SQL scripts
 │
 ├── frontend/
 │   ├── package.json
-│   ├── package-lock.json
 │   ├── vite.config.js
-│   ├── vitest.config.js
-│   ├── .eslintrc.js
-│   ├── .prettierrc
-│   ├── .gitignore
-│   ├── README.md
 │   ├── index.html
-│   │
-│   ├── public/
-│   │   ├── favicon.ico
-│   │   └── robots.txt
-│   │
 │   └── src/
 │       ├── main.jsx
 │       ├── App.jsx
-│       │
-│       ├── pages/
-│       │   ├── Home.jsx
-│       │   ├── Login.jsx
-│       │   ├── Register.jsx
-│       │   ├── Dashboard.jsx
-│       │   ├── Unauthorized.jsx
-│       │   ├── NotFound.jsx
-│       │   ├── [Entidad]List.jsx
-│       │   └── [Entidad]Form.jsx
-│       │
-│       ├── components/
-│       │   ├── common/
-│       │   │   ├── Header.jsx
-│       │   │   ├── Footer.jsx
-│       │   │   ├── Loading.jsx
-│       │   │   ├── ErrorMessage.jsx
-│       │   │   ├── ConfirmDialog.jsx
-│       │   │   ├── ErrorBoundary.jsx
-│       │   │   └── ProtectedRoute.jsx
-│       │   │
-│       │   └── [entidad]/
-│       │       ├── [Entidad]Table.jsx
-│       │       ├── [Entidad]Card.jsx
-│       │       └── [Entidad]Dialog.jsx
-│       │
-│       ├── layouts/
-│       │   └── MainLayout.jsx
-│       │
-│       ├── services/
-│       │   ├── api.js
-│       │   ├── authService.js
-│       │   └── [entidad]Service.js
-│       │
-│       ├── hooks/
-│       │   ├── useAuth.js
-│       │   ├── useNotification.js
-│       │   ├── usePagination.js
-│       │   ├── useErrorHandler.js
-│       │   └── use[Entidad].js
-│       │
-│       ├── contexts/
-│       │   ├── AuthContext.jsx
-│       │   └── NotificationContext.jsx
-│       │
-│       ├── utils/
-│       │   ├── constants.js
-│       │   ├── validators.js
-│       │   ├── validationSchemas.js
-│       │   ├── errorHandler.js
-│       │   ├── sanitizer.js
-│       │   └── logger.js
-│       │
-│       ├── styles/
-│       │   ├── theme.js
-│       │   └── globalStyles.js
-│       │
-│       └── __tests__/
-│           ├── setup.js
-│           ├── pages/
-│           │   └── Login.test.jsx
-│           ├── components/
-│           │   └── [Entidad]Card.test.jsx
-│           └── services/
-│               └── authService.test.js
+│       ├── theme/              # Material-UI theme
+│       ├── pages/              # Page components
+│       ├── components/         # Reusable components
+│       ├── services/           # API services
+│       ├── hooks/              # Custom hooks
+│       ├── contexts/           # React contexts
+│       └── utils/              # Utilities + validationSchemas.js
 │
-├── database/
-│   ├── README.md
-│   ├── schema/
-│   │   ├── 01_create_tables.sql
-│   │   ├── 02_create_sequences.sql
-│   │   ├── 03_create_indexes.sql
-│   │   └── 04_create_constraints.sql
-│   │
-│   ├── data/
-│   │   ├── 01_insert_roles.sql
-│   │   └── 02_insert_test_data.sql
-│   │
-│   └── scripts/
-│       ├── backup.sh
-│       └── restore.sh
-│
-├── docker/
-│   ├── Dockerfile.backend
-│   ├── Dockerfile.frontend
-│   └── nginx.conf
-│
-├── docs/
-│   ├── API.md
-│   ├── DEPLOYMENT.md
-│   ├── CONTRIBUTING.md
-│   └── CHANGELOG.md
-│
-└── scripts/
-    ├── deploy.sh
-    ├── rollback.sh
-    ├── setup-dev.sh
-    └── run-tests.sh
+└── database/
+    ├── schema/                 # DDL scripts
+    └── data/                   # DML scripts
 ```
 
 ---
@@ -306,6 +128,7 @@ proyecto-uda/
 
 | Directorio | Descripción | Obligatorio |
 |------------|-------------|-------------|
+| `theme/` | Tema UDA de Material-UI (MUI) | ✅ |
 | `pages/` | Componentes de página completa | ✅ |
 | `components/` | Componentes reutilizables | ✅ |
 | `components/common/` | Componentes comunes a toda la app | ✅ |
@@ -338,33 +161,21 @@ proyecto-uda/
 | `docker-compose.yml` | Configuración de Docker Compose | ✅ |
 | `.env.example` | Ejemplo de variables de entorno | ✅ |
 
-### Backend
+### Archivos Críticos
 
-| Archivo | Descripción | Obligatorio |
-|---------|-------------|-------------|
-| `pom.xml` | Configuración de Maven | ✅ |
-| `Application.java` | Clase principal de Spring Boot | ✅ |
-| `application.yml` | Configuración principal | ✅ |
-| `application-dev.yml` | Configuración de desarrollo | ✅ |
-| `application-prod.yml` | Configuración de producción | ✅ |
-| `SecurityConfig.java` | Configuración de seguridad | ✅ |
-| `WebConfig.java` | Configuración web | ✅ |
-| `JacksonConfig.java` | Serialización JSON | ✅ |
-| `logback-spring.xml` | Configuración de logging | ⚠️ Recomendado |
-| `banner.txt` | Banner personalizado de Spring Boot | ⚠️ Opcional |
+**Backend:**
+- `pom.xml` (packaging=war)
+- `Application.java` (extends SpringBootServletInitializer)
+- `application.yml` (H2)
+- `application-prod.yml` (Oracle)
+- `JacksonConfig.java`
+- `GlobalExceptionHandler.java`
 
-### Frontend
-
-| Archivo | Descripción | Obligatorio |
-|---------|-------------|-------------|
-| `package.json` | Dependencias y scripts npm | ✅ |
-| `vite.config.js` | Configuración de Vite | ✅ |
-| `vitest.config.js` | Configuración de Vitest | ✅ |
-| `.eslintrc.js` | Configuración de ESLint | ✅ |
-| `.prettierrc` | Configuración de Prettier | ✅ |
-| `index.html` | HTML principal | ✅ |
-| `main.jsx` | Punto de entrada de React | ✅ |
-| `App.jsx` | Componente raíz | ✅ |
+**Frontend:**
+- `package.json` (React 18 + MUI 5)
+- `main.jsx` (ThemeProvider)
+- `theme/` (5 archivos)
+- `validationSchemas.js` (Yup)
 
 ---
 
@@ -570,7 +381,7 @@ Al generar un proyecto, verificar que existen:
 - [ ] `pom.xml` con todas las dependencias
 - [ ] `Application.java` que extiende `SpringBootServletInitializer`
 - [ ] Carpetas `config/`, `controller/`, `service/`, `repository/`, `entity/`, `dto/`, `mapper/`, `exception/`, `security/`
-- [ ] `application.yml`, `application-dev.yml`, `application-prod.yml`
+- [ ] `application.yml`, `application-prod.yml`
 - [ ] Al menos una entidad completa con su Controller, Service, Repository, DTO y Mapper
 - [ ] `GlobalExceptionHandler` y excepciones personalizadas
 - [ ] Configuración de seguridad con JWT
@@ -614,3 +425,28 @@ Al generar un proyecto, verificar que existen:
 ---
 
 **Nota**: Esta estructura es **obligatoria** y debe ser seguida exactamente por la IA al generar una aplicación UDA.
+
+---
+
+## ✅ Validación de la Estructura
+
+Para verificar que la estructura generada es correcta, usa [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md).
+
+### Validación Rápida de Estructura
+
+```bash
+# Verificar que existen todos los directorios obligatorios
+ls -la backend/src/main/java/com/uda/[proyecto]/
+# Debe mostrar: config/, controller/, service/, repository/, entity/, dto/, mapper/, exception/
+
+ls -la frontend/src/
+# Debe mostrar: pages/, components/, services/, hooks/, contexts/, utils/, styles/
+
+ls -la database/
+# Debe mostrar: schema/, data/
+```
+
+**Para validación completa:** [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md) - PASO 1
+
+---
+```

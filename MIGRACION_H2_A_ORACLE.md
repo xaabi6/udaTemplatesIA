@@ -105,74 +105,20 @@ VALUES (2, 'Producto 2', 'Descripción 2', 149.99, 5, true, CURRENT_TIMESTAMP);
 
 ## 🔧 Preparación para Oracle
 
-### **Opción A: Oracle Database Express Edition (XE)**
-
-**Instalación Local:**
-
-1. Descargar de: https://www.oracle.com/database/technologies/xe-downloads.html
-2. Versión recomendada: **Oracle 21c XE**
-3. Instalación simple para desarrollo
-
-**Características:**
-- ✅ Gratuito
-- ✅ Fácil instalación
-- ⚠️ Limitaciones de recursos (12GB RAM, 2 CPUs)
-
----
-
-### **Opción B: Docker (Recomendado)**
-
-**Ventajas:**
-- ✅ No requiere instalación en el sistema
-- ✅ Fácil de iniciar/detener
-- ✅ Aislamiento completo
-- ✅ Múltiples versiones simultáneas
-
-**Instalación:**
+### **Opción Recomendada: Docker**
 
 ```bash
-docker pull container-registry.oracle.com/database/express:21.3.0-xe
-```
-
-**Ejecutar contenedor:**
-
-```bash
+# Ejecutar Oracle XE en Docker
 docker run -d \
   --name oracle-xe \
   -p 1521:1521 \
-  -p 5500:5500 \
   -e ORACLE_PWD=OraclePassword123 \
-  -e ORACLE_CHARACTERSET=AL32UTF8 \
   container-registry.oracle.com/database/express:21.3.0-xe
-```
 
-**Verificar estado:**
-
-```bash
+# Verificar que está listo
 docker logs -f oracle-xe
+# Esperar: "DATABASE IS READY TO USE!"
 ```
-
-**Esperar mensaje:**
-```
-DATABASE IS READY TO USE!
-```
-
----
-
-### **Opción C: Oracle Cloud (Always Free)**
-
-**Ventajas:**
-- ✅ Completamente gratuito
-- ✅ Siempre disponible
-- ✅ No requiere hardware local
-- ✅ Autonomous Database
-
-**Pasos:**
-
-1. Crear cuenta en: https://www.oracle.com/cloud/free/
-2. Crear **Autonomous Database** (Always Free Tier)
-3. Descargar **Wallet** de conexión
-4. Configurar conexión en aplicación
 
 ---
 
@@ -529,155 +475,21 @@ java -jar -Dspring.profiles.active=prod target/mi-aplicacion.jar
 
 ## ⚠️ Diferencias Importantes H2 vs Oracle
 
-### **1. Tipos de Datos**
+### **Diferencias Principales**
 
-| Concepto | H2 | Oracle | Notas |
-|----------|-----|--------|-------|
-| Boolean | `BOOLEAN` | `NUMBER(1)` | 0=false, 1=true |
-| String | `VARCHAR(n)` | `VARCHAR2(n)` | Oracle usa VARCHAR2 |
-| ID | `BIGINT` | `NUMBER(19)` | Para IDs |
-| Decimal | `DECIMAL(p,s)` | `NUMBER(p,s)` | Para precios |
-| Timestamp | `TIMESTAMP` | `TIMESTAMP` | Compatible |
-| Texto largo | `CLOB` | `CLOB` | Compatible |
-| Binario | `BLOB` | `BLOB` | Compatible |
+| Aspecto | H2 | Oracle |
+|---------|-----|--------|
+| **Boolean** | `BOOLEAN` | `NUMBER(1)` |
+| **String** | `VARCHAR(n)` | `VARCHAR2(n)` |
+| **ID** | `AUTO_INCREMENT` | `SEQUENCE.NEXTVAL` |
+| **Paginación** | `LIMIT/OFFSET` | `OFFSET/FETCH` |
+| **NULL** | `IFNULL()` | `NVL()` |
 
----
-
-### **2. Secuencias vs Auto-Increment**
-
-#### **H2:**
-
+**Ejemplo secuencia Oracle:**
 ```sql
-CREATE TABLE productos (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(200)
-);
-```
-
-#### **Oracle:**
-
-```sql
--- Crear secuencia
-CREATE SEQUENCE PRODUCTOS_SEQ START WITH 1 INCREMENT BY 1;
-
--- Crear tabla
-CREATE TABLE PRODUCTOS (
-    ID NUMBER(19) PRIMARY KEY,
-    NOMBRE VARCHAR2(200)
-);
-
--- Insertar usando secuencia
-INSERT INTO PRODUCTOS (ID, NOMBRE) 
-VALUES (PRODUCTOS_SEQ.NEXTVAL, 'Producto 1');
-```
-
----
-
-### **3. Funciones de Fecha**
-
-| Operación | H2 | Oracle |
-|-----------|-----|--------|
-| Fecha actual | `CURRENT_TIMESTAMP` | `CURRENT_TIMESTAMP` o `SYSDATE` |
-| Agregar días | `DATEADD('DAY', 7, fecha)` | `fecha + 7` |
-| Diferencia días | `DATEDIFF('DAY', f1, f2)` | `TRUNC(f2) - TRUNC(f1)` |
-| Formato | `FORMATDATETIME(fecha, 'yyyy-MM-dd')` | `TO_CHAR(fecha, 'YYYY-MM-DD')` |
-| Parsear | `PARSEDATETIME('2024-01-01', 'yyyy-MM-dd')` | `TO_DATE('2024-01-01', 'YYYY-MM-DD')` |
-
----
-
-### **4. Strings y Búsquedas**
-
-#### **H2 (case-sensitive por defecto):**
-
-```sql
-SELECT * FROM productos WHERE nombre LIKE '%texto%';
-```
-
-#### **Oracle (case-insensitive):**
-
-```sql
--- Opción 1: UPPER
-SELECT * FROM PRODUCTOS 
-WHERE UPPER(NOMBRE) LIKE UPPER('%texto%');
-
--- Opción 2: LOWER
-SELECT * FROM PRODUCTOS 
-WHERE LOWER(NOMBRE) LIKE LOWER('%texto%');
-
--- Opción 3: Índice funcional (mejor performance)
-CREATE INDEX IDX_PRODUCTOS_NOMBRE_UPPER ON PRODUCTOS(UPPER(NOMBRE));
-
-SELECT * FROM PRODUCTOS 
-WHERE UPPER(NOMBRE) LIKE UPPER('%texto%');
-```
-
----
-
-### **5. Paginación**
-
-#### **H2:**
-
-```sql
-SELECT * FROM productos 
-ORDER BY id 
-LIMIT 10 OFFSET 20;
-```
-
-#### **Oracle 12c+:**
-
-```sql
-SELECT * FROM PRODUCTOS 
-ORDER BY ID 
-OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;
-```
-
-#### **Oracle 11g y anteriores:**
-
-```sql
-SELECT * FROM (
-    SELECT a.*, ROWNUM rnum FROM (
-        SELECT * FROM PRODUCTOS ORDER BY ID
-    ) a WHERE ROWNUM <= 30
-) WHERE rnum > 20;
-```
-
----
-
-### **6. Concatenación de Strings**
-
-#### **H2:**
-
-```sql
-SELECT nombre || ' - ' || descripcion FROM productos;
-```
-
-#### **Oracle:**
-
-```sql
--- Opción 1: Operador ||
-SELECT NOMBRE || ' - ' || DESCRIPCION FROM PRODUCTOS;
-
--- Opción 2: CONCAT (solo 2 argumentos)
-SELECT CONCAT(CONCAT(NOMBRE, ' - '), DESCRIPCION) FROM PRODUCTOS;
-```
-
----
-
-### **7. Valores NULL**
-
-#### **H2:**
-
-```sql
-SELECT IFNULL(descripcion, 'Sin descripción') FROM productos;
-```
-
-#### **Oracle:**
-
-```sql
-SELECT NVL(DESCRIPCION, 'Sin descripción') FROM PRODUCTOS;
-
--- O usar COALESCE (estándar SQL)
-SELECT COALESCE(DESCRIPCION, 'Sin descripción') FROM PRODUCTOS;
+CREATE SEQUENCE PRODUCTOS_SEQ START WITH 1;
+CREATE TABLE PRODUCTOS (ID NUMBER(19) PRIMARY KEY);
+INSERT INTO PRODUCTOS VALUES (PRODUCTOS_SEQ.NEXTVAL);
 ```
 
 ---
