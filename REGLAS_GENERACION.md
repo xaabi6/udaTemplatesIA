@@ -1231,391 +1231,75 @@ describe('ProductoList', () => {
 
 ---
 
-## 📚 Ejemplos Detallados: DO vs DON'T
+## 📚 Ejemplos Clave
 
-### Backend - Java
-
-#### ✅ DO: Inyección de dependencias por constructor
+### Backend - Patrones Correctos
 
 ```java
-// ✅ CORRECTO
+// ✅ Inyección por constructor
 @Service
 @RequiredArgsConstructor
-public class ProductoServiceImpl implements ProductoService {
+public class ProductoServiceImpl {
     private final ProductoRepository repository;
     private final ProductoMapper mapper;
-    
-    // Constructor generado automáticamente por Lombok
 }
-```
 
-```java
-// ❌ INCORRECTO
-@Service
-public class ProductoServiceImpl implements ProductoService {
-    @Autowired
-    private ProductoRepository repository;
-    
-    @Autowired
-    private ProductoMapper mapper;
-}
-```
-
-#### ✅ DO: Usar Optional para valores que pueden ser null
-
-```java
-// ✅ CORRECTO
-@Override
+// ✅ Manejo de Optional
 public ProductoDTO findById(Long id) {
     return repository.findById(id)
         .map(mapper::toDTO)
-        .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
+        .orElseThrow(() -> new ResourceNotFoundException("No encontrado"));
 }
-```
 
-```java
-// ❌ INCORRECTO
-@Override
-public ProductoDTO findById(Long id) {
-    Producto producto = repository.findById(id).get(); // Puede lanzar NoSuchElementException
-    if (producto == null) {
-        return null; // No retornar null
-    }
-    return mapper.toDTO(producto);
-}
-```
-
-#### ✅ DO: Logging apropiado
-
-```java
-// ✅ CORRECTO
-@Slf4j
-public class ProductoServiceImpl {
-    public ProductoDTO create(ProductoDTO dto) {
-        log.debug("Creando producto: {}", dto.getNombre());
-        // ... lógica
-        log.info("Producto creado con ID: {}", saved.getId());
-        return mapper.toDTO(saved);
-    }
-}
-```
-
-```java
-// ❌ INCORRECTO
-public class ProductoServiceImpl {
-    public ProductoDTO create(ProductoDTO dto) {
-        System.out.println("Creando producto: " + dto.getNombre()); // NO usar System.out
-        // ... lógica
-        return mapper.toDTO(saved);
-    }
-}
-```
-
-#### ✅ DO: Transacciones apropiadas
-
-```java
-// ✅ CORRECTO
-@Service
-@Transactional(readOnly = true) // Por defecto solo lectura
-public class ProductoServiceImpl {
-    
-    @Override
-    public List<ProductoDTO> findAll() {
-        // Solo lectura, usa la transacción de clase
-    }
-    
-    @Override
-    @Transactional // Escritura, sobrescribe la de clase
-    public ProductoDTO create(ProductoDTO dto) {
-        // Operación de escritura
-    }
-}
-```
-
-```java
-// ❌ INCORRECTO
-@Service
-public class ProductoServiceImpl {
-    // Sin @Transactional, cada método abre su propia transacción
-    
-    public List<ProductoDTO> findAll() {
-        // Sin control transaccional
-    }
-}
-```
-
-#### ✅ DO: Validaciones en DTOs
-
-```java
-// ✅ CORRECTO
+// ✅ Validaciones en DTOs
 @Data
 public class ProductoDTO {
-    @NotBlank(message = "El nombre es obligatorio")
-    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
+    @NotBlank(message = "Nombre obligatorio")
+    @Size(min = 3, max = 100)
     private String nombre;
-    
-    @NotNull(message = "El precio es obligatorio")
-    @DecimalMin(value = "0.01", message = "El precio debe ser mayor a 0")
-    private BigDecimal precio;
 }
 ```
 
-```java
-// ❌ INCORRECTO
-@Data
-public class ProductoDTO {
-    private String nombre; // Sin validaciones
-    private BigDecimal precio; // Sin validaciones
-}
-```
-
-#### ✅ DO: Manejo de excepciones
-
-```java
-// ✅ CORRECTO
-@Override
-public ProductoDTO findById(Long id) {
-    return repository.findById(id)
-        .map(mapper::toDTO)
-        .orElseThrow(() -> new ResourceNotFoundException(
-            "Producto no encontrado con ID: " + id
-        ));
-}
-```
-
-```java
-// ❌ INCORRECTO
-@Override
-public ProductoDTO findById(Long id) {
-    try {
-        Producto producto = repository.findById(id).get();
-        return mapper.toDTO(producto);
-    } catch (Exception e) {
-        // Catch genérico y vacío
-        return null;
-    }
-}
-```
-
-### Frontend - React
-
-#### ✅ DO: Hooks en el orden correcto
+### Frontend - Patrones Correctos
 
 ```jsx
-// ✅ CORRECTO
+// ✅ Hooks ordenados
 function ProductoList() {
-  // 1. Hooks de estado
   const [productos, setProductos] = useState([]);
-  const [loading, setLoading] = useState(false);
-  
-  // 2. Hooks de navegación/contexto
   const navigate = useNavigate();
-  const { showError } = useNotification();
-  
-  // 3. useEffect
-  useEffect(() => {
-    loadProductos();
-  }, []);
-  
-  // 4. Funciones
-  const loadProductos = async () => {
-    // ...
-  };
-  
-  // 5. Render
-  return <div>...</div>;
-}
-```
-
-```jsx
-// ❌ INCORRECTO
-function ProductoList() {
-  const navigate = useNavigate();
-  
-  const loadProductos = async () => {
-    // ...
-  };
-  
-  const [productos, setProductos] = useState([]); // Hooks después de funciones
   
   useEffect(() => {
     loadProductos();
   }, []);
   
-  const [loading, setLoading] = useState(false); // Hooks desordenados
-  
   return <div>...</div>;
 }
-```
 
-#### ✅ DO: Manejo de errores en llamadas API
-
-```jsx
-// ✅ CORRECTO
-const loadProductos = async () => {
-  try {
-    setLoading(true);
-    const data = await productoService.getAll();
-    setProductos(data);
-  } catch (error) {
-    console.error('Error al cargar productos:', error);
-    showError('Error al cargar los productos');
-  } finally {
-    setLoading(false);
-  }
-};
-```
-
-```jsx
-// ❌ INCORRECTO
-const loadProductos = async () => {
-  const data = await productoService.getAll(); // Sin try-catch
-  setProductos(data);
-};
-```
-
-#### ✅ DO: Validación de formularios
-
-```jsx
-// ✅ CORRECTO
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-
+// ✅ Validación con Yup
 const schema = yup.object({
-  nombre: yup.string().required('El nombre es obligatorio'),
-  precio: yup.number().positive().required('El precio es obligatorio'),
+  nombre: yup.string().required('Obligatorio'),
 });
 
-function ProductoForm() {
-  const { control, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(schema),
-  });
-  
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Controller
-        name="nombre"
-        control={control}
-        render={({ field }) => (
-          <TextField
-            {...field}
-            error={!!errors.nombre}
-            helperText={errors.nombre?.message}
-          />
-        )}
-      />
-    </form>
-  );
-}
+const { control } = useForm({
+  resolver: yupResolver(schema),
+});
 ```
 
-```jsx
-// ❌ INCORRECTO
-function ProductoForm() {
-  const [nombre, setNombre] = useState('');
-  
-  const handleSubmit = () => {
-    // Sin validación
-    productoService.create({ nombre });
-  };
-  
-  return (
-    <form onSubmit={handleSubmit}>
-      <input value={nombre} onChange={(e) => setNombre(e.target.value)} />
-    </form>
-  );
-}
-```
-
-#### ✅ DO: Uso de PropTypes
-
-```jsx
-// ✅ CORRECTO
-import PropTypes from 'prop-types';
-
-function ProductoCard({ producto, onEdit, onDelete }) {
-  return <Card>...</Card>;
-}
-
-ProductoCard.propTypes = {
-  producto: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    nombre: PropTypes.string.isRequired,
-    precio: PropTypes.number.isRequired,
-  }).isRequired,
-  onEdit: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
-};
-
-export default ProductoCard;
-```
-
-```jsx
-// ❌ INCORRECTO
-function ProductoCard({ producto, onEdit, onDelete }) {
-  return <Card>...</Card>; // Sin PropTypes
-}
-
-export default ProductoCard;
-```
-
-### Base de Datos - Oracle
-
-#### ✅ DO: Nomenclatura en MAYÚSCULAS
+### Base de Datos - Patrones Correctos
 
 ```sql
--- ✅ CORRECTO
+-- ✅ Nomenclatura Oracle
 CREATE TABLE PRODUCTOS (
-    ID NUMBER(19) NOT NULL,
-    NOMBRE VARCHAR2(100) NOT NULL,
-    PRECIO NUMBER(10,2) NOT NULL,
-    CONSTRAINT PK_PRODUCTOS PRIMARY KEY (ID)
+    ID NUMBER(19) PRIMARY KEY,
+    NOMBRE VARCHAR2(100) NOT NULL
 );
 
-CREATE SEQUENCE PRODUCTOS_SEQ START WITH 1 INCREMENT BY 1;
-CREATE INDEX IDX_PRODUCTOS_NOMBRE ON PRODUCTOS(NOMBRE);
-```
+CREATE SEQUENCE PRODUCTOS_SEQ;
 
-```sql
--- ❌ INCORRECTO
-create table productos (
-    id number(19) not null,
-    nombre varchar2(100) not null,
-    precio number(10,2) not null,
-    primary key (id)  -- Sin nombre de constraint
-);
-
-create sequence productos_seq;  -- Minúsculas
-```
-
-#### ✅ DO: Constraints con nombres
-
-```sql
--- ✅ CORRECTO
+-- ✅ Constraints con nombres
 ALTER TABLE PRODUCTOS
-ADD CONSTRAINT FK_PRODUCTOS_CATEGORIA 
+ADD CONSTRAINT FK_PRODUCTOS_CATEGORIA
 FOREIGN KEY (CATEGORIA_ID) REFERENCES CATEGORIAS(ID);
-
-ALTER TABLE PRODUCTOS
-ADD CONSTRAINT CK_PRODUCTOS_PRECIO 
-CHECK (PRECIO > 0);
-
-ALTER TABLE PRODUCTOS
-ADD CONSTRAINT UK_PRODUCTOS_SKU 
-UNIQUE (SKU);
-```
-
-```sql
--- ❌ INCORRECTO
-ALTER TABLE PRODUCTOS
-ADD FOREIGN KEY (CATEGORIA_ID) REFERENCES CATEGORIAS(ID);  -- Sin nombre
-
-ALTER TABLE PRODUCTOS
-ADD CHECK (PRECIO > 0);  -- Sin nombre
-
-ALTER TABLE PRODUCTOS
-ADD UNIQUE (SKU);  -- Sin nombre
 ```
 
 ---

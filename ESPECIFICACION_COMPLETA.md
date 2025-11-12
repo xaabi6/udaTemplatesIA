@@ -123,187 +123,44 @@ proyecto-uda/
 ### Backend - .gitignore
 
 ```gitignore
-# Compiled class files
-*.class
-
-# Log files
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files
+# Build
+target/
 *.jar
 *.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
 
-# Virtual machine crash logs
-hs_err_pid*
-replay_pid*
-
-# Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
-
-# Gradle
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-# IntelliJ IDEA
+# IDEs
 .idea/
-*.iws
 *.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-# Eclipse
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-# NetBeans
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-# VS Code
 .vscode/
 
-# Mac
-.DS_Store
+# Logs
+*.log
 
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# Application specific
-application-local.yml
-application-local.properties
+# Environment
 *.env
-.env.local
+application-local.yml
 ```
 
 ### Frontend - .gitignore
 
 ```gitignore
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
 # Dependencies
 node_modules/
-.pnp
-.pnp.js
 
-# Testing
-/coverage
-*.lcov
-.nyc_output
-
-# Production
+# Build
 dist/
-dist-ssr/
 build/
-*.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Environment variables
+# Environment
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+# IDEs
+.vscode/
+.idea/
 
-# TypeScript
-*.tsbuildinfo
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Optional stylelint cache
-.stylelintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn
-.yarn-integrity
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# yarn v2
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
+# Logs
+*.log
 ```
 
 ### Raíz del Proyecto - .gitignore
@@ -312,44 +169,15 @@ vite.config.ts.timestamp-*
 # IDEs
 .idea/
 .vscode/
-*.iml
-*.ipr
-*.iws
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-logs/
-*.log
+# Build
+target/
+dist/
+node_modules/
 
 # Environment
 .env
-.env.local
-.env.*.local
-
-# Build outputs
-target/
-dist/
-build/
-node_modules/
-
-# Temporary files
-*.tmp
-*.temp
-*.swp
-*.swo
-*~
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Backups
-*.bak
-*.backup
+*.log
 ```
 
 ---
