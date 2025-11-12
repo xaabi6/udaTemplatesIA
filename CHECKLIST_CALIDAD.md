@@ -8,7 +8,7 @@ Este documento proporciona una lista de verificación exhaustiva que la IA debe 
 
 **⚠️ IMPORTANTE:** Para verificar los 8 elementos críticos obligatorios, consulta [REGLAS_GENERACION.md](REGLAS_GENERACION.md#elementos-críticos-obligatorios)
 
-**💡 Nota:** Para validación paso a paso con ejemplos, consulta [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
+**💡 Nota:** Para validación paso a paso con ejemplos, consulta [GUIA_VALIDACION.md](GUIA_VALIDACION.md)
 
 ---
 
@@ -339,7 +339,7 @@ Para cada Controller:
 - [ ] No hay wrappers innecesarios sobre componentes MUI
 - [ ] No se usa `!important` en estilos
 
-**📖 Referencia**: [UI_STANDARDS.md](UI_STANDARDS.md)
+**📖 Referencia**: [ESTANDARES_UI.md](ESTANDARES_UI.md)
 
 ### Servicios
 

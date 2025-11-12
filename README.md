@@ -54,9 +54,9 @@ Si eres una IA procesando esta solicitud:
 1. **Lee completamente** el archivo `ESPECIFICACION_COMPLETA.md`
 2. **Aplica** todas las reglas definidas en `REGLAS_GENERACION.md`
 3. **Sigue** la estructura exacta de `ESTRUCTURA_PROYECTO.md`
-4. **Aplica** los estándares de UI definidos en `UI_STANDARDS.md`
+4. **Aplica** los estándares de UI definidos en `ESTANDARES_UI.md`
 5. **Comprueba** el código generado contra `CHECKLIST_CALIDAD.md`
-6. **Valida** el código generado con `VALIDATION_GUIDE.md` (puntuación mínima: 80/100)
+6. **Valida** el código generado con `GUIA_VALIDACION.md` (puntuación mínima: 80/100)
 7. **Consulta** `MIGRACION_H2_A_ORACLE.md` para configuración de base de datos
 
 ## 📁 Estructura del Repositorio
@@ -68,8 +68,8 @@ udaTemplatesIA/
 ├── REGLAS_GENERACION.md              # Reglas que la IA debe seguir
 ├── CHECKLIST_CALIDAD.md              # Validación de calidad
 ├── ESTRUCTURA_PROYECTO.md            # Estructura de carpetas y archivos
-├── UI_STANDARDS.md                   # Estándares de UI
-├── VALIDATION_GUIDE.md               # Guía de validación paso a paso
+├── ESTANDARES_UI.md                  # Estándares de UI
+├── GUIA_VALIDACION.md                # Guía de validación paso a paso
 ├── MIGRACION_H2_A_ORACLE.md          # Guía de migración de base de datos
 ├── docs/                             # Documentación técnica detallada
 └── examples/                         # Aplicaciones de referencia
@@ -109,7 +109,7 @@ Guía paso a paso para validar el código generado:
 ### 5. [ESTRUCTURA_PROYECTO.md](ESTRUCTURA_PROYECTO.md)
 Estructura exacta de carpetas y archivos que debe generar la IA.
 
-### 6. [UI_STANDARDS.md](UI_STANDARDS.md)
+### 6. [ESTANDARES_UI.md](ESTANDARES_UI.md)
 Estándares de diseño y UI usando Material-UI como design system oficial.
 
 ### 7. [MIGRACION_H2_A_ORACLE.md](MIGRACION_H2_A_ORACLE.md)
@@ -181,7 +181,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=prod
 
 ## 🔍 Validación del Código Generado
 
-Después de generar una aplicación, **valida que cumple todos los estándares UDA** usando [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md).
+Después de generar una aplicación, **valida que cumple todos los estándares UDA** usando [GUIA_VALIDACION.md](GUIA_VALIDACION.md).
 
 ### Sistema de Puntuación
 
@@ -309,7 +309,7 @@ Si encuentras problemas con el código generado:
 Si tienes dudas durante la generación:
 1. Consulta REGLAS_GENERACION.md sección "Elementos Críticos"
 2. Revisa ESPECIFICACION_COMPLETA.md secciones marcadas con ⚠️
-3. Usa VALIDATION_GUIDE.md para auto-validación paso a paso
+3. Usa GUIA_VALIDACION.md para auto-validación paso a paso
 4. En caso de duda, incluye el elemento (mejor sobrar que faltar)
 
 **Antes de entregar:** Ejecuta PASO 0 de VALIDATION_GUIDE.md (debe obtener 55/55 puntos)

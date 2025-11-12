@@ -532,7 +532,7 @@ public class Producto {
 - Fetch API en lugar de Axios
 - Create React App (usar Vite)
 
-**📖 Ver estándares de UI**: [UI_STANDARDS.md](../UI_STANDARDS.md)
+**📖 Ver estándares de UI**: [ESTANDARES_UI.md](ESTANDARES_UI.md)
 
 ---
 
@@ -574,7 +574,7 @@ frontend/src/theme/
 └── shadows.js         # Sombras
 ```
 
-**📖 Documentación completa**: [UI_STANDARDS.md](../UI_STANDARDS.md)
+**📖 Documentación completa**: [ESTANDARES_UI.md](ESTANDARES_UI.md)
 
 ### Ejemplos de Uso Correcto
 
@@ -598,7 +598,7 @@ import { Box, Typography, Button } from '@mui/material';
 </div>
 ```
 
-**Ver más ejemplos**: [UI_STANDARDS.md](../UI_STANDARDS.md)
+**Ver más ejemplos**: [ESTANDARES_UI.md](ESTANDARES_UI.md)
 
 ---
 

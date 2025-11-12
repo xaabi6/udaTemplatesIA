@@ -2085,7 +2085,7 @@ export default Home;
 
 Todas las aplicaciones UDA **DEBEN** usar Material-UI como design system único.
 
-**📖 Documentación completa**: [UI_STANDARDS.md](UI_STANDARDS.md)
+**📖 Documentación completa**: [ESTANDARES_UI.md](ESTANDARES_UI.md)
 
 ### Resumen de Reglas
 
@@ -2115,7 +2115,7 @@ frontend/src/theme/
 └── shadows.js         # Sombras
 ```
 
-**Ver implementación completa**: [UI_STANDARDS.md](UI_STANDARDS.md)
+**Ver implementación completa**: [ESTANDARES_UI.md](ESTANDARES_UI.md)
 
 ## Base de Datos
 
@@ -3204,7 +3204,7 @@ sqlplus usuario/password@localhost:1521/ORCL
 
 Una vez generada la aplicación siguiendo esta especificación, **valida el código** usando:
 
-### [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
+### [GUIA_VALIDACION.md](GUIA_VALIDACION.md)
 
 Esta guía proporciona:
 
@@ -3232,7 +3232,7 @@ npm run build     # Debe compilar sin errores
 npm test          # Tests deben pasar
 ```
 
-Para validación completa, sigue todos los pasos de [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
+Para validación completa, sigue todos los pasos de [GUIA_VALIDACION.md](GUIA_VALIDACION.md)
 
 ---
 ```
